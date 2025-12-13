@@ -57,10 +57,6 @@ const Index = () => {
             } else {
                 setSuccess("Withdrawal request submitted successfully!")
 
-                // Update UI balance
-                const updatedBalance = user.totalBalance - parseFloat(withdrawAmount)
-                updateUserAPI(user._id, { totalBalance: updatedBalance })
-
                 setTransactionPassword("")
             }
         } catch (err) {
