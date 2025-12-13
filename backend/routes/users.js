@@ -192,6 +192,7 @@ router.put("/updateUser/:id", async (req, res) => {
       "walletBalance",
       "totalBalance",
       "commissionTotal",
+      "salary",
       "activeSetTasks",
       "allowWithdrawal",
       "notifications",
