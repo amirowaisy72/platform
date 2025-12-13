@@ -300,7 +300,7 @@ export default function UsersManagement() {
 
       {/* Modals */}
       {showActionsModal && <UserActionsModal user={selectedUserForActions} onClose={handleCloseActionsModal} />}
-      {showTasksModal && <UserTasksModal userId={selectedUserForTasks._id} onClose={handleCloseTasksModal} />}
+      {showTasksModal && <UserTasksModal userId={selectedUserForTasks._id} userDetails={selectedUserForTasks} onClose={handleCloseTasksModal} />}
       {showTransactionsModal && <TransactionsListModal onClose={handleCloseTransactionsModal} />}
     </div>
   )

@@ -8,7 +8,7 @@ import * as LucideIcons from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useUsersContext } from "../../app/AllContext/UsersContext"
 
-export default function AssignCombo({ userId, onClose }) {
+export default function AssignCombo({ userId, onClose, userDetails }) {
   const { fetchProducts, createCombo, getCombosByUser, updateCombo, deleteCombo, resetUserData } = useUsersContext()
 
   const { toast } = useToast()
