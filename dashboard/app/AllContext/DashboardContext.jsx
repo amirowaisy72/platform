@@ -62,6 +62,9 @@ export function DashboardProvider({ children }) {
   const [activeTab, setActiveTab] = useState("users");
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
+  // const host = "${host}api"
+  const host = "https://platform-backend-pi.vercel.app/"
+
   // Users Management Functions
   const addUser = (userData) => {
     const newUser = {
@@ -94,7 +97,7 @@ export function DashboardProvider({ children }) {
   // Products Management
   const addProduct = async (productData) => {
     try {
-      const res = await fetch("https://platform-backend-kappa.vercel.app/api/products/addProduct", {
+      const res = await fetch(`${host}api/products/addProduct`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productData),
@@ -119,7 +122,7 @@ export function DashboardProvider({ children }) {
   const deleteProduct = async (productId) => {
     try {
       // Call your backend API to delete the product
-      const response = await fetch(`https://platform-backend-kappa.vercel.app/api/products/deleteProduct/${productId}`, {
+      const response = await fetch(`${host}api/products/deleteProduct/${productId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -148,7 +151,7 @@ export function DashboardProvider({ children }) {
   const fetchProducts = async (page = 1) => {
     try {
       setIsLoadingProducts(true);
-      const response = await fetch(`https://platform-backend-kappa.vercel.app/api/products/products?page=${page}`);
+      const response = await fetch(`${host}api/products/products?page=${page}`);
 
       if (!response.ok) {
         console.error("Failed to fetch products");
@@ -176,7 +179,7 @@ export function DashboardProvider({ children }) {
       setIsLoadingUsers(true);
 
       const response = await fetch(
-        `http://localhost:3001/api/users/users?page=${page}`
+        `${host}api/users/users?page=${page}`
       );
 
       if (!response.ok) {
@@ -203,7 +206,7 @@ export function DashboardProvider({ children }) {
       setIsLoadingUsers(true);
 
       const response = await fetch(
-        `http://localhost:3001/api/users/search?query=${query}&page=${page}`
+        `${host}api/users/search?query=${query}&page=${page}`
       );
 
       const data = await response.json();
@@ -221,7 +224,7 @@ export function DashboardProvider({ children }) {
   const updateUserAPI = async (userId, updatedData) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/users/updateUser/${userId}`,
+        `${host}api/users/updateUser/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -254,7 +257,7 @@ export function DashboardProvider({ children }) {
     try {
       // Send a PUT request to the backend to update the user account
       const response = await fetch(
-        `http://localhost:3001/api/users/rechargeTrainingAccount/${userId}`,
+        `${host}api/users/rechargeTrainingAccount/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

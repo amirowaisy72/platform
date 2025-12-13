@@ -10,6 +10,9 @@ export function UsersProvider({ children }) {
   const router = useRouter();
   const [transactions, setTransactions] = useState(null)
 
+  // const host = "${host}api"
+  const host = "https://platform-backend-pi.vercel.app/"
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -61,7 +64,7 @@ export function UsersProvider({ children }) {
   const fetchProducts = async (count) => {
     console.log("Hitting API")
     try {
-      const response = await fetch(`http://localhost:3001/api/products/fetchProducts/${count}`);
+      const response = await fetch(`${host}api/products/fetchProducts/${count}`);
       if (!response.ok) {
         const errData = await response.json();
         throw new Error(errData.error || "Failed to fetch products");
@@ -77,7 +80,7 @@ export function UsersProvider({ children }) {
   // Create Combo
   const createCombo = async (payload) => {
     try {
-      const response = await fetch("http://localhost:3001/api/combo/create", {
+      const response = await fetch(`${host}api/combo/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -99,7 +102,7 @@ export function UsersProvider({ children }) {
   // Get all combos
   const getAllCombos = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/combo");
+      const response = await fetch(`${host}api/combo`);
       const data = await response.json();
       return data.data || [];
     } catch (error) {
@@ -111,7 +114,7 @@ export function UsersProvider({ children }) {
   // Get combos by User ID
   const getCombosByUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/combo/user/${userId}`);
+      const response = await fetch(`${host}api/combo/user/${userId}`);
       const data = await response.json();
       return data.data || [];
     } catch (error) {
@@ -123,7 +126,7 @@ export function UsersProvider({ children }) {
   // Update Combo
   const updateCombo = async (id, payload) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/combo/update/${id}`, {
+      const response = await fetch(`${host}api/combo/update/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -143,7 +146,7 @@ export function UsersProvider({ children }) {
   // Delete Combo
   const deleteCombo = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/combo/delete/${id}`, {
+      const response = await fetch(`${host}api/combo/delete/${id}`, {
         method: "DELETE",
       });
 
@@ -161,7 +164,7 @@ export function UsersProvider({ children }) {
   // Reset combos and tasks for a user
   const resetUserData = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/combo/reset/${userId}`, {
+      const response = await fetch(`${host}api/combo/reset/${userId}`, {
         method: "DELETE",
       });
 
@@ -178,7 +181,7 @@ export function UsersProvider({ children }) {
 
   const addWallet = async (payload) => {
     try {
-      const response = await fetch("http://localhost:3001/api/users/addWallet", {
+      const response = await fetch(`${host}api/users/addWallet`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -197,7 +200,7 @@ export function UsersProvider({ children }) {
 
   const getWallets = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/users/getWallet");
+      const response = await fetch(`${host}api/users/getWallet`);
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch wallets");
@@ -211,7 +214,7 @@ export function UsersProvider({ children }) {
 
   const deleteWallet = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/deleteWallet/${id}`, {
+      const response = await fetch(`${host}api/users/deleteWallet/${id}`, {
         method: "DELETE",
       });
 
@@ -228,7 +231,7 @@ export function UsersProvider({ children }) {
 
   const updateWallet = async (id, payload) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/updateWallet/${id}`, {
+      const response = await fetch(`${host}api/users/updateWallet/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -246,7 +249,7 @@ export function UsersProvider({ children }) {
   };
 
   useEffect(() => {
-    const eventSource = new EventSource("http://localhost:3001/api/realtime-transactions");
+    const eventSource = new EventSource(`${host}api/realtime-transactions`);
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -271,7 +274,7 @@ export function UsersProvider({ children }) {
 
   const updateTransactionStatus = async (transactionId, status) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/updateTransaction/${transactionId}`, {
+      const response = await fetch(`${host}api/users/updateTransaction/${transactionId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -290,7 +293,7 @@ export function UsersProvider({ children }) {
 
   const getUserByUserId = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/getUserByUserId/${userId}`, {
+      const response = await fetch(`${host}api/users/getUserByUserId/${userId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -308,7 +311,7 @@ export function UsersProvider({ children }) {
 
   const fetchWalletAddress = async (addressId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/fetchWalletAddress/${addressId}`);
+      const response = await fetch(`${host}api/users/fetchWalletAddress/${addressId}`);
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch wallet address");
@@ -322,7 +325,7 @@ export function UsersProvider({ children }) {
 
   const fetchTasksByUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/fetchTasks/${userId}`, {
+      const response = await fetch(`${host}api/users/fetchTasks/${userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

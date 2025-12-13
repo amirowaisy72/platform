@@ -8,6 +8,8 @@ const UsersContext = createContext();
 export function UsersProvider({ children }) {
   const [user, setUser] = useState(null);
   const router = useRouter();
+  // const host = "${host}api"
+  const host = "https://platform-backend-pi.vercel.app/"
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -21,7 +23,7 @@ export function UsersProvider({ children }) {
 
   const fetchUserById = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/getUser/${id}`);
+      const response = await fetch(`${host}api/users/getUser/${id}`);
 
       const result = await response.json();
       if (!response.ok) {
@@ -44,7 +46,7 @@ export function UsersProvider({ children }) {
   // Function to handle the POST request
   const submitNewUser = async (data) => {
     try {
-      const response = await fetch("http://localhost:3001/api/users/createUser", {
+      const response = await fetch(`${host}api/users/createUser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +78,7 @@ export function UsersProvider({ children }) {
   // 🧠 Add this inside UsersProvider, below submitNewUser
   const loginUser = async (data) => {
     try {
-      const response = await fetch("http://localhost:3001/api/users/login", {
+      const response = await fetch(`${host}api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +113,7 @@ export function UsersProvider({ children }) {
   const updateUserAPI = async (userId, updatedData) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/users/updateUser/${userId}`,
+        `${host}api/users/updateUser/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -141,7 +143,7 @@ export function UsersProvider({ children }) {
   const submitTask = async (userId, updatedData) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/users/submitTask/${userId}`,
+        `${host}api/users/submitTask/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -169,9 +171,8 @@ export function UsersProvider({ children }) {
 
   // Inside UsersProvider
   const fetchOptimizationProducts = async (count) => {
-    console.log("Hitting API")
     try {
-      const response = await fetch(`http://localhost:3001/api/products/fetchProducts/${count}`);
+      const response = await fetch(`${host}api/products/fetchProducts/${count}`);
       if (!response.ok) {
         const errData = await response.json();
         throw new Error(errData.error || "Failed to fetch products");
@@ -187,7 +188,7 @@ export function UsersProvider({ children }) {
   // Fetch all tasks for a user
   const fetchTasks = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/fetchTasks/${userId}`);
+      const response = await fetch(`${host}api/users/fetchTasks/${userId}`);
       const result = await response.json();
 
       if (!response.ok) {
@@ -205,7 +206,7 @@ export function UsersProvider({ children }) {
   // Inside UsersProvider, add this function
   const getTaskForUser = async (userId, taskNo) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/getTaskForUser/${userId}/${taskNo}`);
+      const response = await fetch(`${host}api/users/getTaskForUser/${userId}/${taskNo}`);
       const result = await response.json();
 
       if (!response.ok) {
@@ -226,7 +227,7 @@ export function UsersProvider({ children }) {
   // Save a task (normal or combo) and apply commission
   const saveTask = async ({ userId, orderType, combo, product, commission }) => {
     try {
-      const response = await fetch("http://localhost:3001/api/users/saveTask", {
+      const response = await fetch(`${host}api/users/saveTask`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -263,7 +264,7 @@ export function UsersProvider({ children }) {
   // Create a new transaction
   const createTransactionAPI = async (data) => {
     try {
-      const response = await fetch("http://localhost:3001/api/users/createTransaction", {
+      const response = await fetch(`${host}api/users/createTransaction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -287,7 +288,7 @@ export function UsersProvider({ children }) {
   // Fetch all transactions for a user
   const getUserTransactionsAPI = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/getTransactions/${userId}`);
+      const response = await fetch(`${host}api/users/getTransactions/${userId}`);
 
       const result = await response.json();
 
@@ -304,7 +305,7 @@ export function UsersProvider({ children }) {
 
   const createWalletAddressAPI = async (data) => {
     try {
-      const response = await fetch("http://localhost:3001/api/users/createAddress", {
+      const response = await fetch(`${host}api/users/createAddress`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -327,7 +328,7 @@ export function UsersProvider({ children }) {
 
   const updateWalletAddressAPI = async (addressId, data) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/updateAddress/${addressId}`, {
+      const response = await fetch(`${host}api/users/updateAddress/${addressId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -350,7 +351,7 @@ export function UsersProvider({ children }) {
 
   const deleteWalletAddressAPI = async (addressId, userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/deleteAddress/${addressId}?userId=${userId}`, {
+      const response = await fetch(`${host}api/users/deleteAddress/${addressId}?userId=${userId}`, {
         method: "DELETE",
       });
 
@@ -369,7 +370,7 @@ export function UsersProvider({ children }) {
 
   const getWalletAddressesAPI = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/getWalletAddresses/${userId}`);
+      const response = await fetch(`${host}api/users/getWalletAddresses/${userId}`);
 
       const result = await response.json();
 
@@ -386,7 +387,7 @@ export function UsersProvider({ children }) {
 
   const getWallets = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/users/getWallet");
+      const response = await fetch(`${host}api/users/getWallet`);
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch wallets");
