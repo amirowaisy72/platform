@@ -54,7 +54,7 @@ const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarti
       setShowCSModal(true)
       return
     }
-    if(user.walletBalance < 70){
+    if(user.totalBalance < 70){
       setCSMessage("Minimum required balance to start optimization is $70")
       setShowCSModal(true)
       return

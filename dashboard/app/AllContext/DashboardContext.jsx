@@ -67,35 +67,25 @@ export function DashboardProvider({ children }) {
 
   useEffect(() => {
     const eventSource = new EventSource(`${host}api/realtime-events`);
-  
+
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-  
-      // ===============================
-      // 🔥 USERS LIVE UPDATE
-      // ===============================
+
+      // 🔥 SIRF USERS UPDATE
       if (data.event === "users_updated") {
-        console.log("👤 Users updated → refetching users");
+        console.log("👤 Users changed → refetch users");
         fetchUsers(1);
       }
-  
-      // ===============================
-      // 🔥 TRANSACTIONS (IF NEEDED)
-      // ===============================
-      if (data.event === "transaction_update") {
-        // handle if needed elsewhere
-      }
     };
-  
-    eventSource.onerror = (err) => {
-      console.error("❌ SSE Error:", err);
+
+    eventSource.onerror = () => {
       eventSource.close();
     };
-  
+
     return () => eventSource.close();
   }, []);
 
-  
+
   // Users Management Functions
   const addUser = (userData) => {
     const newUser = {

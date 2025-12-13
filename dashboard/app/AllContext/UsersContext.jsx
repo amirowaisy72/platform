@@ -249,51 +249,50 @@ export function UsersProvider({ children }) {
   };
 
   useEffect(() => {
-    const eventSource = new EventSource(`${host}api/realtime-transactions`);
+    const eventSource = new EventSource(`${host}api/realtime-events`);
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
-      // 🔥 INITIAL DATA (Pending only)
+      // 🔥 INITIAL PENDING TRANSACTIONS
       if (data.event === "initial_transactions") {
         setTransactions(data.payload);
       }
 
-      // 🔥 REALTIME UPDATE
+      // 🔥 REALTIME TRANSACTION UPDATE
       if (data.event === "transaction_update") {
         const updatedDoc = data.payload.fullDocument;
 
         setTransactions((prev) => {
-          // 🔍 check if transaction already exists
           const index = prev.findIndex(
             (item) => item._id === updatedDoc._id
           );
 
-          // ❌ agar status Pending nahi raha → remove from list
+          // ❌ Pending se bahar gaya → remove
           if (updatedDoc.status !== "Pending") {
             return prev.filter((item) => item._id !== updatedDoc._id);
           }
 
-          // 🔁 agar already exist karta hai → update it
+          // 🔁 Update existing
           if (index !== -1) {
             const updated = [...prev];
             updated[index] = updatedDoc;
             return updated;
           }
 
-          // ➕ agar new Pending transaction hai → add to top
+          // ➕ New Pending
           return [updatedDoc, ...prev];
         });
       }
     };
 
-    eventSource.onerror = (err) => {
-      console.error("SSE Error:", err);
+    eventSource.onerror = () => {
       eventSource.close();
     };
 
     return () => eventSource.close();
   }, []);
+
 
 
   const updateTransactionStatus = async (transactionId, status) => {
