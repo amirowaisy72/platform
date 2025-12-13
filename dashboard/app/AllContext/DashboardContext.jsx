@@ -62,9 +62,40 @@ export function DashboardProvider({ children }) {
   const [activeTab, setActiveTab] = useState("users");
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
-  // const host = "${host}api"
+  // const host = "http://localhost:3001/"
   const host = "https://platform-backend-pi.vercel.app/"
 
+  useEffect(() => {
+    const eventSource = new EventSource(`${host}api/realtime-events`);
+  
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+  
+      // ===============================
+      // 🔥 USERS LIVE UPDATE
+      // ===============================
+      if (data.event === "users_updated") {
+        console.log("👤 Users updated → refetching users");
+        fetchUsers(1);
+      }
+  
+      // ===============================
+      // 🔥 TRANSACTIONS (IF NEEDED)
+      // ===============================
+      if (data.event === "transaction_update") {
+        // handle if needed elsewhere
+      }
+    };
+  
+    eventSource.onerror = (err) => {
+      console.error("❌ SSE Error:", err);
+      eventSource.close();
+    };
+  
+    return () => eventSource.close();
+  }, []);
+
+  
   // Users Management Functions
   const addUser = (userData) => {
     const newUser = {

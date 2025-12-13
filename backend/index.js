@@ -3,6 +3,7 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 
 const TransactionHistory = require("./models/TransactionHistory");
+const User = require("./models/Users");
 
 const app = express();
 const PORT = 3001;
@@ -13,7 +14,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors());
 
 // =======================
-//   🔥 SSE CLIENT STORE
+// 🔥 SSE CLIENT STORE
 // =======================
 let sseClients = [];
 
@@ -24,74 +25,99 @@ const broadcastSSE = (data) => {
 };
 
 // =======================
-//   🔥 Change Stream Setup
+// 🔥 TRANSACTION WATCHER
 // =======================
 const startTransactionWatcher = () => {
-  console.log("⚡ TransactionHistory Change Stream Started...");
+  console.log("⚡ TransactionHistory Change Stream Started");
 
-  const changeStream = TransactionHistory.watch([], { fullDocument: "updateLookup" });
+  const changeStream = TransactionHistory.watch([], {
+    fullDocument: "updateLookup",
+  });
 
   changeStream.on("change", (change) => {
-
     broadcastSSE({
       event: "transaction_update",
-      payload: change
+      payload: change,
     });
   });
 
-  changeStream.on("error", (error) => {
-    console.error("❌ Change Stream Error:", error);
+  changeStream.on("error", (err) => {
+    console.error("❌ Transaction Change Stream Error:", err);
   });
 };
 
+// =======================
+// 🔥 USERS WATCHER
+// =======================
+const startUsersWatcher = () => {
+  console.log("⚡ Users Change Stream Started");
+
+  const changeStream = User.watch([], {
+    fullDocument: "updateLookup",
+  });
+
+  changeStream.on("change", (change) => {
+    broadcastSSE({
+      event: "users_updated",
+      payload: {
+        operationType: change.operationType,
+        userId: change.documentKey?._id,
+      },
+    });
+  });
+
+  changeStream.on("error", (err) => {
+    console.error("❌ Users Change Stream Error:", err);
+  });
+};
+
+// 🔥 Start watchers
 startTransactionWatcher();
-
+startUsersWatcher();
 
 // =======================
-//   🔥 SSE ROUTE
+// 🔥 SSE ROUTE
 // =======================
-app.get("/api/realtime-transactions", async (req, res) => {
+app.get("/api/realtime-events", async (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders();
 
   const clientId = Date.now();
-  const newClient = { id: clientId, res };
-  sseClients.push(newClient);
+  sseClients.push({ id: clientId, res });
 
-  // ========================
-  // 🔥 1) SEND INITIAL PENDING TRANSACTIONS ONLY
-  // ========================
+  // 🔥 Initial pending transactions only
   try {
-    const initialData = await TransactionHistory
-      .find({ status: "Pending" }) // ← filter here
-      .sort({ createdAt: -1 });
+    const pendingTransactions = await TransactionHistory.find({
+      status: "Pending",
+    }).sort({ createdAt: -1 });
 
-    res.write(`data: ${JSON.stringify({
-      event: "initial_transactions",
-      payload: initialData
-    })}\n\n`);
+    res.write(
+      `data: ${JSON.stringify({
+        event: "initial_transactions",
+        payload: pendingTransactions,
+      })}\n\n`
+    );
   } catch (err) {
-    console.error("❌ Error sending initial data:", err);
+    console.error("❌ Initial data error:", err);
   }
 
   req.on("close", () => {
-    console.log(`🔴 SSE Client Disconnected: ${clientId}`);
     sseClients = sseClients.filter((c) => c.id !== clientId);
+    console.log(`🔴 SSE Client Disconnected: ${clientId}`);
   });
 });
 
 // =======================
-//      ROUTES
+// ROUTES
 // =======================
 app.use("/api/users", require("./routes/users"));
 app.use("/api/products", require("./routes/products"));
 app.use("/api/combo", require("./routes/combo"));
 
-
 // =======================
-//   START SERVER
+// START SERVER
 // =======================
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import * as LucideIcons from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { useUsersContext } from "../../app/AllContext/UsersContext"
 import { useDashboard } from "@/app/AllContext/DashboardContext"
+import { useUsersContext } from "@/app/AllContext/UsersContext"
 
-export default function UserTasks({ userId, onClose, userDetails }) {
+export default function AssignCombo({ userId, onClose, userDetails }) {
   const { fetchProducts, createCombo, getCombosByUser, updateCombo, deleteCombo, resetUserData } = useUsersContext()
-  const { users, updateUserAPI } = useDashboard()
+  const { updateUser } = useDashboard()
 
   const { toast } = useToast()
 
@@ -26,18 +26,9 @@ export default function UserTasks({ userId, onClose, userDetails }) {
   const [loadingCombos, setLoadingCombos] = useState(false)
   const [savingCombo, setSavingCombo] = useState(false)
   const [resetting, setResetting] = useState(false)
+  const [clearingCombo, setClearingCombo] = useState(false)
+  const [rechargingTraining, setRechargingTraining] = useState(false)
   const [error, setError] = useState("")
-
-  const [hasUserChanges, setHasUserChanges] = useState(false)
-  const [localUserData, setLocalUserData] = useState(null)
-  const [updatingUser, setUpdatingUser] = useState(false)
-
-  useEffect(() => {
-    const currentUser = users.find((u) => u._id === userId)
-    if (currentUser) {
-      setLocalUserData(currentUser)
-    }
-  }, [users, userId])
 
   // Load combos
   const loadCombos = async () => {
@@ -191,100 +182,107 @@ export default function UserTasks({ userId, onClose, userDetails }) {
     })
   }
 
-  const handleRechargeTraining = async () => {
-    if (!localUserData) return
+  // Clear Combo handler
+  const handleClearCombo = async () => {
+    setClearingCombo(true)
 
-    // Generate random combo price between 230 and 245
-    const randomComboPrice = Math.floor(Math.random() * (245 - 230 + 1)) + 230
-
-    // Update local user data
-    const updatedUserData = {
-      ...localUserData,
-      currentVIPLevel: {
-        ...localUserData.currentVIPLevel,
-        number: 2,
-      },
-      walletBalance: 1085,
-      totalBalance: 1085,
-      commissionTotal: 0,
-      todayProfit: 0,
-    }
-
-    setLocalUserData(updatedUserData)
-    setHasUserChanges(true)
-
-    // Auto set combo fields
-    setComboAt("2")
-    setComboPrice(randomComboPrice.toString())
-    setProductCount("2")
+    const absoluteWalletBalance = Math.abs(userDetails.walletBalance || 0)
+    const newTotalBalance = (userDetails.totalBalance || 0) + absoluteWalletBalance
 
     try {
-      setLoadingProducts(true)
-      const items = await fetchProducts("2")
+      await updateUser(userId, {
+        walletBalance: 0,
+        totalBalance: newTotalBalance,
+      })
 
-      if (items.length) {
-        setProducts(items)
-        toast({
-          title: "Training Account Configured",
-          description: `User data updated and ${items.length} products fetched automatically.`,
-        })
+      toast({
+        title: "Combo Cleared",
+        description: `Wallet balance transferred to total. New total: ${newTotalBalance}`,
+      })
+
+      // Update userDetails if passed by reference
+      if (userDetails) {
+        userDetails.walletBalance = 0
+        userDetails.totalBalance = newTotalBalance
       }
-    } catch (err) {
-      toast({
-        title: "Training Account Configured",
-        description: "User data updated but failed to fetch products automatically.",
-      })
-    } finally {
-      setLoadingProducts(false)
-    }
-  }
-
-  const handleClearCombo = () => {
-    if (!localUserData) return
-
-    // Get wallet balance (convert negative to positive if needed)
-    const walletAmount = Math.abs(localUserData.walletBalance)
-
-    // Add to total balance
-    const newTotalBalance = localUserData.totalBalance + walletAmount
-
-    // Update local user data
-    const updatedUserData = {
-      ...localUserData,
-      walletBalance: 0,
-      totalBalance: newTotalBalance,
-    }
-
-    setLocalUserData(updatedUserData)
-    setHasUserChanges(true)
-
-    toast({
-      title: "Combo Cleared",
-      description: `$${walletAmount.toFixed(2)} moved to total balance. Click 'Update User' to save.`,
-    })
-  }
-
-  const handleUpdateUser = async () => {
-    if (!localUserData || !hasUserChanges) return
-
-    setUpdatingUser(true)
-
-    const result = await updateUserAPI(userId, localUserData)
-
-    setUpdatingUser(false)
-
-    if (result) {
-      setHasUserChanges(false)
-      toast({
-        title: "Success",
-        description: "User updated successfully",
-      })
-    } else {
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update user",
+        description: "Failed to clear combo",
         variant: "destructive",
       })
+    } finally {
+      setClearingCombo(false)
+    }
+  }
+
+  // Recharge Training handler with auto-fill and auto-fetch
+  const handleRechargeTraining = async () => {
+    setRechargingTraining(true)
+
+    try {
+      // Update user balance and VIP level
+      await updateUser(userId, {
+        "currentVIPLevel.number": 2,
+        walletBalance: 1085,
+        totalBalance: 1085,
+        commissionTotal: 0,
+        todayProfit: 0,
+      })
+
+      // Auto-fill form with default values
+      setComboAt("32")
+      const randomPrice = Math.floor(Math.random() * (245 - 230 + 1)) + 230
+      setComboPrice(randomPrice.toString())
+      setProductCount("2")
+
+      toast({
+        title: "Training Account Recharged",
+        description: "VIP Level 2 with 1085 balance applied. Form auto-filled.",
+      })
+
+      // Auto-fetch products after a short delay
+      setTimeout(async () => {
+        try {
+          setLoadingProducts(true)
+          const items = await fetchProducts(2)
+
+          if (items.length > 0) {
+            setProducts(items)
+            toast({
+              title: "Products Loaded",
+              description: `${items.length} products fetched automatically`,
+            })
+          }
+        } catch (err) {
+          toast({
+            title: "Warning",
+            description: "Failed to auto-fetch products. Please fetch manually.",
+            variant: "destructive",
+          })
+        } finally {
+          setLoadingProducts(false)
+        }
+      }, 500)
+
+      // Update userDetails if passed by reference
+      if (userDetails) {
+        userDetails.walletBalance = 1085
+        userDetails.totalBalance = 1085
+        userDetails.commissionTotal = 0
+        userDetails.todayProfit = 0
+        if (userDetails.currentVIPLevel) {
+          userDetails.currentVIPLevel.number = 2
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to recharge training account",
+        variant: "destructive",
+      })
+    } finally {
+      setRechargingTraining(false)
     }
   }
 
@@ -302,76 +300,44 @@ export default function UserTasks({ userId, onClose, userDetails }) {
                 <p className="text-blue-100 text-sm">Create and manage product combos</p>
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="bg-white/20 hover:bg-white/30 p-2 rounded-xl backdrop-blur-sm transition-all"
-            >
-              <LucideIcons.X className="text-white" size={20} />
-            </button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleClearCombo}
+                disabled={clearingCombo}
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl px-4 py-2 shadow-lg transition-all"
+              >
+                {clearingCombo ? (
+                  <LucideIcons.Loader2 className="animate-spin mr-2" size={18} />
+                ) : (
+                  <LucideIcons.RefreshCw className="mr-2" size={18} />
+                )}
+                Clear Combo
+              </Button>
+
+              <Button
+                onClick={handleRechargeTraining}
+                disabled={rechargingTraining}
+                className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white rounded-xl px-4 py-2 shadow-lg transition-all"
+              >
+                {rechargingTraining ? (
+                  <LucideIcons.Loader2 className="animate-spin mr-2" size={18} />
+                ) : (
+                  <LucideIcons.Zap className="mr-2" size={18} />
+                )}
+                Recharge Training
+              </Button>
+
+              <button
+                onClick={onClose}
+                className="bg-white/20 hover:bg-white/30 p-2 rounded-xl backdrop-blur-sm transition-all"
+              >
+                <LucideIcons.X className="text-white" size={20} />
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
-          <div className="mb-6 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 rounded-2xl p-5 border border-indigo-700/50">
-            <div className="flex items-center gap-2 mb-4">
-              <LucideIcons.Zap className="text-yellow-400" size={20} />
-              <h3 className="text-lg font-semibold text-white">Training Account Actions</h3>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              <Button
-                onClick={handleRechargeTraining}
-                className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 flex items-center gap-2"
-              >
-                <LucideIcons.Zap size={18} />
-                Recharge Training
-              </Button>
-
-              <Button
-                onClick={handleClearCombo}
-                className="bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 flex items-center gap-2"
-              >
-                <LucideIcons.Eraser size={18} />
-                Clear Combo
-              </Button>
-
-              {hasUserChanges && (
-                <Button
-                  onClick={handleUpdateUser}
-                  disabled={updatingUser}
-                  className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 flex items-center gap-2 animate-pulse"
-                >
-                  {updatingUser ? (
-                    <LucideIcons.Loader2 className="animate-spin" size={18} />
-                  ) : (
-                    <LucideIcons.Save size={18} />
-                  )}
-                  Update User
-                </Button>
-              )}
-            </div>
-
-            {localUserData && hasUserChanges && (
-              <div className="mt-4 p-3 bg-slate-800/50 rounded-xl border border-slate-700">
-                <p className="text-xs text-slate-400 mb-2">Pending Changes:</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="text-slate-300">
-                    <span className="text-slate-500">VIP Level:</span> {localUserData.currentVIPLevel.number}
-                  </div>
-                  <div className="text-slate-300">
-                    <span className="text-slate-500">Wallet:</span> ${localUserData.walletBalance}
-                  </div>
-                  <div className="text-slate-300">
-                    <span className="text-slate-500">Total Balance:</span> ${localUserData.totalBalance}
-                  </div>
-                  <div className="text-slate-300">
-                    <span className="text-slate-500">Commission:</span> ${localUserData.commissionTotal}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">

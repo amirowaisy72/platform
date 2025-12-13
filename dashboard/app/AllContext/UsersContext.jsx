@@ -254,18 +254,42 @@ export function UsersProvider({ children }) {
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
+      // 🔥 INITIAL DATA (Pending only)
       if (data.event === "initial_transactions") {
-        setTransactions(data.payload); // Initially only Pending transactions
+        setTransactions(data.payload);
       }
 
+      // 🔥 REALTIME UPDATE
       if (data.event === "transaction_update") {
         const updatedDoc = data.payload.fullDocument;
 
-        setTransactions(prevTransactions => {
-          // Remove the updated document from the state
-          return prevTransactions.filter(t => t._id !== updatedDoc._id);
+        setTransactions((prev) => {
+          // 🔍 check if transaction already exists
+          const index = prev.findIndex(
+            (item) => item._id === updatedDoc._id
+          );
+
+          // ❌ agar status Pending nahi raha → remove from list
+          if (updatedDoc.status !== "Pending") {
+            return prev.filter((item) => item._id !== updatedDoc._id);
+          }
+
+          // 🔁 agar already exist karta hai → update it
+          if (index !== -1) {
+            const updated = [...prev];
+            updated[index] = updatedDoc;
+            return updated;
+          }
+
+          // ➕ agar new Pending transaction hai → add to top
+          return [updatedDoc, ...prev];
         });
       }
+    };
+
+    eventSource.onerror = (err) => {
+      console.error("SSE Error:", err);
+      eventSource.close();
     };
 
     return () => eventSource.close();
