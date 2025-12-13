@@ -4,14 +4,22 @@ import * as LucideIcons from "lucide-react"
 import { useRouter } from "next/navigation";
 import Bottom from '@/app/Common/Bottom/Bottom'
 import Wallets from './Wallets/Index'
+import { useEffect, useState } from "react";
 
 export default function PaymentMethodPage() {
-    const router = useRouter();
-    const storedUser = localStorage.getItem("user");
+    const router = useRouter()
+    const [storedUser, setStoredUser] = useState(null)
 
-    if (!storedUser) {
-        router.push("/login")
-    }
+    useEffect(() => {
+        const userData = localStorage.getItem("user")
+        if (!userData) {
+            router.push("/login")
+        } else {
+            setStoredUser(JSON.parse(userData))
+        }
+    }, [])
+    // Prevent rendering until localStorage is checked
+    if (!storedUser) return null
 
     return (
         <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -48,8 +56,8 @@ export default function PaymentMethodPage() {
                         </p>
                     </div>
 
-                   <Wallets />
-                   
+                    <Wallets />
+
                 </div>
             </main>
 
