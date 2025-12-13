@@ -42,38 +42,6 @@ export default function UserActionsModal({ user, onClose }) {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleClearCombo = () => {
-    const absoluteWalletBalance = Math.abs(formData.walletBalance)
-    const newTotalBalance = formData.totalBalance + absoluteWalletBalance
-
-    setFormData((prev) => ({
-      ...prev,
-      walletBalance: 0,
-      totalBalance: newTotalBalance,
-    }))
-
-    toast({
-      title: "Combo Cleared",
-      description: `Wallet balance transferred to total. New total: ${newTotalBalance}`,
-    })
-  }
-
-  const handleRechargeTraining = () => {
-    setFormData((prev) => ({
-      ...prev,
-      vipNumber: 2,
-      walletBalance: 1085,
-      totalBalance: 1085,
-      commissionTotal: 0,
-      todayProfit: 0,
-    }))
-
-    toast({
-      title: "Training Account Recharged",
-      description: "VIP Level 2 with 1085 balance applied",
-    })
-  }
-
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
@@ -165,30 +133,14 @@ export default function UserActionsModal({ user, onClose }) {
                 <p className="text-blue-100 text-sm">{user.username}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={handleClearCombo}
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
-              >
-                <LucideIcons.RefreshCw className="h-5 w-5" />
-                <span>Clear Combo</span>
-              </Button>
-              <Button
-                onClick={handleRechargeTraining}
-                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
-              >
-                <LucideIcons.Zap className="h-5 w-5" />
-                <span>Recharge Training</span>
-              </Button>
-              <Button
-                onClick={onClose}
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/20 rounded-xl h-10 w-10"
-              >
-                <LucideIcons.X className="h-6 w-6" />
-              </Button>
-            </div>
+            <Button
+              onClick={onClose}
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/20 rounded-xl h-10 w-10"
+            >
+              <LucideIcons.X className="h-6 w-6" />
+            </Button>
           </div>
 
           {/* Tabs */}
@@ -512,31 +464,33 @@ export default function UserActionsModal({ user, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-slate-900/95 backdrop-blur border-t border-slate-700 p-6 rounded-b-3xl flex justify-end gap-3">
-          <Button
-            onClick={onClose}
-            variant="outline"
-            className="rounded-xl border-slate-700 text-slate-300 hover:bg-slate-800 bg-transparent"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-8"
-          >
-            {isSubmitting ? (
-              <>
-                <LucideIcons.Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              <>
-                <LucideIcons.Check className="h-4 w-4 mr-2" />
-                Update User
-              </>
-            )}
-          </Button>
+        <div className="sticky bottom-0 bg-slate-900/95 backdrop-blur p-6 border-t border-slate-700 rounded-b-3xl">
+          <div className="flex gap-3 justify-end">
+            <Button
+              onClick={onClose}
+              variant="outline"
+              className="px-6 py-2.5 rounded-xl border-slate-700 text-slate-300 hover:bg-slate-800 bg-transparent"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              {isSubmitting ? (
+                <>
+                  <LucideIcons.Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <LucideIcons.Save className="h-5 w-5 mr-2" />
+                  Save Changes
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </Card>
     </div>

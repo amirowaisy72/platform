@@ -112,7 +112,6 @@ export function DashboardProvider({ children }) {
     return () => eventSource.close();
   }, []);
   
-
   // Users Management Functions
   const addUser = (userData) => {
     const newUser = {
