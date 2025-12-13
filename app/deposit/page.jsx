@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
@@ -9,17 +9,23 @@ import CS from "@/app/Common/CustomerService/CS"
 import { useRouter } from "next/navigation"
 import Deposit from "./deposit/Index"
 import TransactionHistory from "@/app/withdrawal/history/Index"
-import { useUsersContext } from "../AllContext/UsersContext"
 
 export default function DepositPage() {
-  const router = useRouter()
-  const { user } = useUsersContext()
   const [isCSOpen, setIsCSOpen] = useState(false)
-  const storedUser = localStorage.getItem("user");
 
-  if (!storedUser) {
-    router.push("/login")
-  }
+  const router = useRouter()
+  const [storedUser, setStoredUser] = useState(null)
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user")
+    if (!userData) {
+      router.push("/login")
+    } else {
+      setStoredUser(JSON.parse(userData))
+    }
+  }, [])
+  // Prevent rendering until localStorage is checked
+  if (!storedUser) return null
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">

@@ -130,12 +130,6 @@ export default function ProfilePage() {
     },
   ]
 
-  const bottomNavLinks = [
-    { name: "Home", icon: LucideIcons.Home, href: "/" },
-    { name: "Starting", icon: LucideIcons.PlayCircle, href: "/starting" },
-    { name: "Records", icon: LucideIcons.ClipboardList, href: "#" },
-  ]
-
   const [showNotifications, setShowNotifications] = useState(false)
   const [showContactDialog, setShowContactDialog] = useState(false)
 
@@ -145,17 +139,14 @@ export default function ProfilePage() {
     "💎 Don't miss out on our special VIP offers!",
   ]
 
-  const supportReps = [
-    { name: "Support Representative 1", phone: "1234567890" },
-    { name: "Support Representative 2", phone: "1234567891" },
-    { name: "Support Representative 3", phone: "1234567892" },
-  ]
-
   const handleLogout = () => {
     setLoggingout(true)
     logout()
   }
 
+  // Prevent rendering until localStorage is checked
+  if (!storedUser) return null
+  
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Enhanced Header */}

@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -14,8 +14,17 @@ import CS from '@/app/Common/CustomerService/CS'
 
 export default function HomePage() {
   const [showNotifications, setShowNotifications] = useState(false)
-  const router = useRouter();
-  const storedUser = localStorage.getItem("user");
+  const router = useRouter()
+    const [storedUser, setStoredUser] = useState(null)
+  
+    useEffect(() => {
+      const userData = localStorage.getItem("user")
+      if (!userData) {
+        router.push("/login")
+      } else {
+        setStoredUser(JSON.parse(userData))
+      }
+    }, [])
 
   const navTabs = [
     { name: "Service", iconName: "Briefcase", href: "#", color: "from-blue-500 to-cyan-500" },
@@ -65,9 +74,8 @@ export default function HomePage() {
     "💎 Don't miss out on our special VIP offers!",
   ]
 
-  if (!storedUser) {
-    router.push("/login")
-  }
+  // Prevent rendering until localStorage is checked
+  if (!storedUser) return null
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">

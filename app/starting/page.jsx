@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
@@ -13,51 +12,56 @@ import Optimization from "./Optimization/Index"
 import Bottom from '@/app/Common/Bottom/Bottom'
 
 export default function StartingPage() {
-  const [showResetDialog, setShowResetDialog] = useState(false)
-  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("user")))
-  const [walletBalance, setWalletBalance] = useState(userDetails.walletBalance)
-  const [todayProfit, setTodayProfit] = useState(0)
-  const [showNotifications, setShowNotifications] = useState(false)
+  const router = useRouter()
   const { user } = useUsersContext()
 
-  const fileInputRef = useRef(null)
+  const [userDetails, setUserDetails] = useState(null)
+  const [walletBalance, setWalletBalance] = useState(0)
+  const [todayProfit, setTodayProfit] = useState(0)
   const [profilePhotoLink, setProfilePhotoLink] = useState("")
-  const router = useRouter();
-  const storedUser = localStorage.getItem("user");
+  const [showResetDialog, setShowResetDialog] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
 
-  if (!storedUser) {
-    router.push("/login")
-  }
+  const fileInputRef = useRef(null)
 
+  // Load user from localStorage safely (CSR only)
   useEffect(() => {
-    const userFromStorage = localStorage.getItem("user")
+    const stored = localStorage.getItem("user")
 
-    if (userFromStorage) {
-      const userData = JSON.parse(userFromStorage)
-
-      setProfilePhotoLink(userData.profile?.photoLink || "")
-    } else {
+    if (!stored) {
       router.push("/login")
+      return
     }
+
+    const parsed = JSON.parse(stored)
+    setUserDetails(parsed)
+    setWalletBalance(parsed.walletBalance || 0)
+    setProfilePhotoLink(parsed.profile?.photoLink || "")
   }, [router])
+
+
+  // Stop rendering until userDetails is loaded
+  if (!userDetails) return null
 
 
   const supportReps = [
     { name: "Support Representative 1", phone: "1234567890" },
     { name: "Support Representative 2", phone: "1234567891" },
-    { name: "Support Representative 3", phone: "1234567892" },
+    { name: "Support Representative 3", phone: "1234567892" }
   ]
+
 
   const userinfo = {
     profilePic: "/professional-profile-avatar.png",
-    name: "Master122",
-    vipLevel: "VIP" + userDetails.currentVIPLevel.number + " - " + userDetails.currentVIPLevel.name,
-    totalBalance: (walletBalance + 0).toFixed(2),
+    name: userDetails.username,
+    vipLevel: `VIP${userDetails.currentVIPLevel.number} - ${userDetails.currentVIPLevel.name}`,
+    totalBalance: walletBalance.toFixed(2),
     walletBalance: walletBalance.toFixed(2),
     frozenBalance: "0.00",
     todayProfit: todayProfit.toFixed(2),
     salary: "0.00",
   }
+
 
   const notifications = [
     "🎉 Important update regarding service changes. Please check your inbox for details.",
@@ -65,29 +69,36 @@ export default function StartingPage() {
     "💎 Don't miss out on our special VIP offers!",
   ]
 
+
+  // Upload Profile Image
   const handleProfileImageUpload = (e) => {
     const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const base64String = reader.result
-        if (storedUser) {
-          const userData = JSON.parse(storedUser)
-          userData.profile = userData.profile || {}
-          userData.profile.photoLink = base64String
-          localStorage.setItem("user", JSON.stringify(userData))
-          setProfilePhotoLink(base64String)
-        }
-      }
-      reader.readAsDataURL(file)
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const base64 = reader.result
+
+      const stored = localStorage.getItem("user")
+      if (!stored) return
+
+      const parsed = JSON.parse(stored)
+      parsed.profile = parsed.profile || {}
+      parsed.profile.photoLink = base64
+
+      localStorage.setItem("user", JSON.stringify(parsed))
+      setProfilePhotoLink(base64)
     }
+
+    reader.readAsDataURL(file)
   }
 
-  const frozenBalance = user?.walletBalance <= 0
-    ? Math.abs(user?.totalBalance || 0) + Math.abs(user?.walletBalance || 0)
-    : 0;
+  // Frozen balance logic
+  const frozenBalance = userDetails.walletBalance <= 0
+    ? Math.abs(userDetails.totalBalance || 0) + Math.abs(userDetails.walletBalance || 0)
+    : 0
 
-  if (!user) return null
+ if (!user) return null
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
