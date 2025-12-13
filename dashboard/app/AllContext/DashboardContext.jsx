@@ -67,24 +67,51 @@ export function DashboardProvider({ children }) {
 
   useEffect(() => {
     const eventSource = new EventSource(`${host}api/realtime-events`);
-
+  
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-
-      // 🔥 SIRF USERS UPDATE
-      if (data.event === "users_updated") {
-        console.log("👤 Users changed → refetch users");
-        fetchUsers(1);
-      }
+  
+      if (data.event !== "users_updated") return;
+  
+      const change = data.payload;
+      const userId = change.documentKey?._id;
+      const updatedUser = change.fullDocument;
+  
+      setUsers((prev) => {
+        // =========================
+        // ➕ USER CREATED
+        // =========================
+        if (change.operationType === "insert") {
+          return [updatedUser, ...prev];
+        }
+  
+        // =========================
+        // 🔁 USER UPDATED
+        // =========================
+        if (change.operationType === "update" || change.operationType === "replace") {
+          return prev.map((user) =>
+            user._id === userId ? { ...user, ...updatedUser } : user
+          );
+        }
+  
+        // =========================
+        // ❌ USER DELETED
+        // =========================
+        if (change.operationType === "delete") {
+          return prev.filter((user) => user._id !== userId);
+        }
+  
+        return prev;
+      });
     };
-
+  
     eventSource.onerror = () => {
       eventSource.close();
     };
-
+  
     return () => eventSource.close();
   }, []);
-
+  
 
   // Users Management Functions
   const addUser = (userData) => {

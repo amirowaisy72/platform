@@ -8,7 +8,11 @@ const User = require("./models/Users");
 const app = express();
 const PORT = 3001;
 
+// =======================
+// 🔥 DB + MIDDLEWARE
+// =======================
 connectDB();
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors());
@@ -20,7 +24,11 @@ let sseClients = [];
 
 const broadcastSSE = (data) => {
   sseClients.forEach((client) => {
-    client.res.write(`data: ${JSON.stringify(data)}\n\n`);
+    try {
+      client.res.write(`data: ${JSON.stringify(data)}\n\n`);
+    } catch (err) {
+      console.error("SSE write error:", err);
+    }
   });
 };
 
@@ -37,7 +45,7 @@ const startTransactionWatcher = () => {
   changeStream.on("change", (change) => {
     broadcastSSE({
       event: "transaction_update",
-      payload: change,
+      payload: change, // ✅ FULL change object
     });
   });
 
@@ -59,10 +67,7 @@ const startUsersWatcher = () => {
   changeStream.on("change", (change) => {
     broadcastSSE({
       event: "users_updated",
-      payload: {
-        operationType: change.operationType,
-        userId: change.documentKey?._id,
-      },
+      payload: change, // ✅ FULL change object (IMPORTANT)
     });
   });
 
@@ -71,7 +76,9 @@ const startUsersWatcher = () => {
   });
 };
 
-// 🔥 Start watchers
+// =======================
+// 🔥 START WATCHERS
+// =======================
 startTransactionWatcher();
 startUsersWatcher();
 
@@ -87,7 +94,9 @@ app.get("/api/realtime-events", async (req, res) => {
   const clientId = Date.now();
   sseClients.push({ id: clientId, res });
 
-  // 🔥 Initial pending transactions only
+  console.log(`🟢 SSE Client Connected: ${clientId}`);
+
+  // 🔥 SEND INITIAL PENDING TRANSACTIONS
   try {
     const pendingTransactions = await TransactionHistory.find({
       status: "Pending",
@@ -100,9 +109,10 @@ app.get("/api/realtime-events", async (req, res) => {
       })}\n\n`
     );
   } catch (err) {
-    console.error("❌ Initial data error:", err);
+    console.error("❌ Initial transactions error:", err);
   }
 
+  // 🔴 Client disconnect
   req.on("close", () => {
     sseClients = sseClients.filter((c) => c.id !== clientId);
     console.log(`🔴 SSE Client Disconnected: ${clientId}`);
@@ -110,14 +120,14 @@ app.get("/api/realtime-events", async (req, res) => {
 });
 
 // =======================
-// ROUTES
+// 🔥 API ROUTES
 // =======================
 app.use("/api/users", require("./routes/users"));
 app.use("/api/products", require("./routes/products"));
 app.use("/api/combo", require("./routes/combo"));
 
 // =======================
-// START SERVER
+// 🚀 START SERVER
 // =======================
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
