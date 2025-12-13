@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -14,8 +14,17 @@ export default function LoginPage() {
         username: "",
         password: "",
     })
-    const router = useRouter();
-    const storedUser = localStorage.getItem("user");
+    const router = useRouter()
+    const [storedUser, setStoredUser] = useState(null)
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user")
+    if (!userData) {
+      router.push("/login")
+    } else {
+      setStoredUser(JSON.parse(userData))
+    }
+  }, [])
 
     const { loginUser } = useUsersContext()
     const [error, setError] = useState("")
@@ -44,9 +53,7 @@ export default function LoginPage() {
         }
     };
 
-    if (storedUser) {
-        router.push("/")
-    }
+    // Prevent rendering until localStorage is checked
 
     return (
         <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
