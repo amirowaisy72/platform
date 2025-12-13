@@ -244,7 +244,7 @@ export default function ProfilePage() {
                     </div>
                     <span className="text-sm font-medium text-slate-600">Wallet Balance</span>
                   </div>
-                  <p className="text-2xl font-bold text-green-600">${user.walletAmount}</p>
+                  <p className="text-2xl font-bold text-green-600">${user.walletAmount.toFixed(2)}</p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100">

@@ -13,11 +13,21 @@ import {
 } from "@/components/ui/dialog"
 import * as LucideIcons from "lucide-react"
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react"
 
 export default function VipLevelsPage() {
   const pathname = usePathname()
-  const router = useRouter();
-  const storedUser = localStorage.getItem("user");
+  const router = useRouter()
+  const [storedUser, setStoredUser] = useState(null)
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user")
+    if (!userData) {
+      router.push("/login")
+    } else {
+      setStoredUser(JSON.parse(userData))
+    }
+  }, [])
 
   // Enhanced VIP levels with more detailed information
   const allVipLevels = [
@@ -131,9 +141,8 @@ export default function VipLevelsPage() {
     },
   ]
 
-  if (!storedUser) {
-    router.push("/login")
-  }
+  // Prevent rendering until localStorage is checked
+  if (!storedUser) return null
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
