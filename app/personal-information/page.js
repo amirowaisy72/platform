@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -13,8 +13,6 @@ import Bottom from "@/app/Common/Bottom/Bottom"
 
 export default function PersonalInformationPage() {
     const { user, updateUserAPI } = useUsersContext()
-    const router = useRouter()
-    const storedUser = typeof window !== "undefined" ? localStorage.getItem("user") : null
 
     const formateDate = (date) => {
         const joinDate = new Date(date).toLocaleString("en-US", {
@@ -23,6 +21,18 @@ export default function PersonalInformationPage() {
         })
         return joinDate
     }
+
+    const router = useRouter()
+    const [storedUser, setStoredUser] = useState(null)
+
+    useEffect(() => {
+        const userData = localStorage.getItem("user")
+        if (!userData) {
+            router.push("/login")
+        } else {
+            setStoredUser(JSON.parse(userData))
+        }
+    }, [])
 
     const [showPasswordDialog, setShowPasswordDialog] = useState(false)
     const [showTransactionPasswordDialog, setShowTransactionPasswordDialog] = useState(false)
@@ -156,9 +166,8 @@ export default function PersonalInformationPage() {
         }
     }
 
-    if (!storedUser) {
-        router.push("/login")
-    }
+    // Prevent rendering until localStorage is checked
+    if (!storedUser) return null
 
     return (
         <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -166,8 +175,8 @@ export default function PersonalInformationPage() {
                 <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] animate-in slide-in-from-top duration-300">
                     <div
                         className={`flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl border-2 backdrop-blur-xl ${notification.type === "success"
-                                ? "bg-green-50/95 border-green-500 text-green-800"
-                                : "bg-red-50/95 border-red-500 text-red-800"
+                            ? "bg-green-50/95 border-green-500 text-green-800"
+                            : "bg-red-50/95 border-red-500 text-red-800"
                             }`}
                     >
                         {notification.type === "success" ? (
