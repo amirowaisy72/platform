@@ -369,6 +369,30 @@ export function UsersProvider({ children }) {
     }
   };
 
+  // Create a new transaction
+  const createTransactionAPI = async (data) => {
+    try {
+      const response = await fetch(`${host}api/users/createTransaction`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Something went wrong while creating transaction.");
+      }
+
+      return result; // returns { message, transaction }
+    } catch (error) {
+      console.error("CreateTransactionAPI Error:", error);
+      return { error: error.message };
+    }
+  };
+
   return (
     <UsersContext.Provider
       value={{

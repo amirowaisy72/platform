@@ -6,13 +6,14 @@ const Index = ({ user }) => {
     const [showTaskSubmissionDialog, setShowTaskSubmissionDialog] = useState(false)
     const [task, setTask] = useState()
     const [starting, setStarting] = useState(false)
+    const [tasksState, setTasksState] = useState(0)
     return (
         <>
             {/* Enhanced Product Optimization Section */}
-            <Start setShowTaskSubmissionDialog={setShowTaskSubmissionDialog} user={user} setTask={setTask} starting={starting} setStarting={setStarting} />
+            <Start setTasksState={setTasksState} tasksState={tasksState} setShowTaskSubmissionDialog={setShowTaskSubmissionDialog} user={user} setTask={setTask} starting={starting} setStarting={setStarting} />
 
             {/* Enhanced Task Submission Dialog */}
-            <Submit task={task} showTaskSubmissionDialog={showTaskSubmissionDialog} setShowTaskSubmissionDialog={setShowTaskSubmissionDialog} user={user} setStarting={setStarting} />
+            <Submit setTasksState={setTasksState} task={task} showTaskSubmissionDialog={showTaskSubmissionDialog} setShowTaskSubmissionDialog={setShowTaskSubmissionDialog} user={user} setStarting={setStarting} />
         </>
     )
 }

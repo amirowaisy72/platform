@@ -9,17 +9,16 @@ import { useUsersContext } from "@/app/AllContext/UsersContext"
 import { Dialog } from "@/components/ui/dialog"
 import CS from "@/app/Common/CustomerService/CS"
 
-const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarting }) => {
+const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarting, tasksState, setTasksState }) => {
   const { fetchOptimizationProducts, fetchTasks, getTaskForUser } = useUsersContext()
   const [shuffled, setShuffled] = useState([])
-  const [tasksState, setTasksState] = useState([])
   const [showCSModal, setShowCSModal] = useState(false)
   const [csMessage, setCSMessage] = useState("")
 
   const fetchTasksAndSetState = async () => {
     if (!user?._id) return
     const result = await fetchTasks(user._id)
-    setTasksState(result || [])
+    setTasksState(result?.length || 0)
   }
 
   useEffect(() => {
@@ -48,20 +47,20 @@ const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarti
             ? 50
             : 55
 
-    if (tasksState.length >= totalTasks) {
+    if (tasksState >= totalTasks) {
       setStarting(false)
       setCSMessage("You've completed your set, please contact support to get reset")
       setShowCSModal(true)
       return
     }
-    if(user.totalBalance < 70){
+    if (user.totalBalance < 70) {
       setCSMessage("Minimum required balance to start optimization is $70")
       setShowCSModal(true)
       return
     }
 
     try {
-      const taskNo = tasksState.length === 0 ? 1 : tasksState.length + 1
+      const taskNo = tasksState === 0 ? 1 : tasksState + 1
       const taskResult = await getTaskForUser(user._id, taskNo)
       console.log(taskResult)
 
@@ -138,7 +137,7 @@ const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarti
 
               <div className="flex items-center gap-3">
                 <div className="text-right">
-                  <div className="text-xl lg:text-2xl font-bold text-blue-600">{tasksState.length}</div>
+                  <div className="text-xl lg:text-2xl font-bold text-blue-600">{tasksState}</div>
                   <div className="text-xs text-slate-500">of {totalTasks}</div>
                 </div>
                 <div className="h-12 w-1 bg-gradient-to-b from-blue-600 to-blue-400 rounded-full"></div>
@@ -192,18 +191,37 @@ const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarti
               <Button
                 onClick={handleStartOptimization}
                 disabled={starting}
-                className="group relative w-24 sm:w-28 md:w-32 lg:w-60 h-24 sm:h-28 md:h-32 lg:h-60 
-               rounded-full bg-gradient-to-br from-blue-600 to-blue-700 
-               hover:from-blue-700 hover:to-blue-800 shadow-xl hover:shadow-2xl 
-               transition-all duration-300 disabled:opacity-75 disabled:cursor-not-allowed 
-               text-white font-semibold flex flex-col items-center justify-center gap-1 border border-blue-500/20"
+                className="
+      relative
+      w-24 sm:w-28 md:w-32 lg:w-60
+      h-24 sm:h-28 md:h-32 lg:h-60
+      rounded-full
+      bg-gradient-to-br from-blue-600 to-blue-700
+      hover:from-blue-700 hover:to-blue-800
+      shadow-xl hover:shadow-2xl
+      transition-all duration-300
+      disabled:opacity-75 disabled:cursor-not-allowed
+      text-white
+      font-extrabold
+      flex items-center justify-center
+      border border-blue-500/20
+    "
               >
-                <LucideIcons.Play className="h-6 sm:h-7 md:h-8 lg:h-9 w-6 sm:w-7 md:w-8 lg:w-9" />
-                <span className="text-xs sm:text-sm md:text-base lg:text-base font-bold">
+                <span
+                  className="
+        text-xl
+        sm:text-2xl
+        md:text-3xl
+        lg:text-5xl
+        tracking-wide
+        select-none
+      "
+                >
                   {starting ? "Starting..." : "Start"}
                 </span>
               </Button>
             </div>
+
 
             {/* Middle Right */}
             <div className="w-full flex justify-center">

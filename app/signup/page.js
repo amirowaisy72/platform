@@ -21,7 +21,7 @@ export default function SignupPage() {
         confirmLoginPassword: "",
         gender: "",
         inviteCode: "",
-        agreeToTerms: false,
+        agreeToTerms: true,
     })
 
     const [showPasswords, setShowPasswords] = useState({

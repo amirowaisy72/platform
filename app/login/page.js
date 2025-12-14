@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import * as LucideIcons from "lucide-react"
 import { useUsersContext } from "../AllContext/UsersContext"
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
+import CS from "@/app/Common/CustomerService/CS"
 
 export default function LoginPage() {
     const [formData, setFormData] = useState({
@@ -17,14 +19,14 @@ export default function LoginPage() {
     const router = useRouter()
     const [storedUser, setStoredUser] = useState(null)
 
-  useEffect(() => {
-    const userData = localStorage.getItem("user")
-    if (!userData) {
-      router.push("/login")
-    } else {
-      setStoredUser(JSON.parse(userData))
-    }
-  }, [])
+    useEffect(() => {
+        const userData = localStorage.getItem("user")
+        if (!userData) {
+            router.push("/login")
+        } else {
+            setStoredUser(JSON.parse(userData))
+        }
+    }, [])
 
     const { loginUser } = useUsersContext()
     const [error, setError] = useState("")
@@ -41,17 +43,17 @@ export default function LoginPage() {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setError("");
+        e.preventDefault()
+        setIsLoading(true)
+        setError("")
 
-        const result = await loginUser(formData); // 👈 send data to context
-        setIsLoading(false);
+        const result = await loginUser(formData) // 👈 send data to context
+        setIsLoading(false)
 
         if (result.error) {
-            setError(result.error);
+            setError(result.error)
         }
-    };
+    }
 
     // Prevent rendering until localStorage is checked
 
@@ -70,7 +72,19 @@ export default function LoginPage() {
                     <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                         Login
                     </h1>
-                    <div className="w-16" />
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-2 bg-white/80 hover:bg-green-50 border-green-200 hover:border-green-300 text-green-700 hover:text-green-800 transition-all"
+                            >
+                                <LucideIcons.Headphones className="h-4 w-4" />
+                                <span className="hidden sm:inline">Support</span>
+                            </Button>
+                        </DialogTrigger>
+                        <CS />
+                    </Dialog>
                 </div>
             </header>
 
@@ -88,7 +102,7 @@ export default function LoginPage() {
                         </div>
                         <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full">
                             <LucideIcons.LogIn className="h-5 w-5 text-blue-600" />
-                            <span className="text-blue-800 font-semibold">Welcome Back</span>
+                            <span className="text-blue-800 font-semibold">Welcome</span>
                         </div>
                         <p className="text-slate-600 text-lg">Sign in to your account</p>
                     </div>

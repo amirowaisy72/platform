@@ -28,6 +28,7 @@ export default function UserActionsModal({ user, onClose }) {
     totalBalance: user.totalBalance || 0,
     commissionTotal: user.commissionTotal || 0,
     todayProfit: user.todayProfit || 0,
+    salary: user.salary || 0,
     canWithdraw: user.canWithdraw || false,
     vipName: user.currentVIPLevel?.name || "",
     vipNumber: user.currentVIPLevel?.number || 0,
@@ -60,6 +61,7 @@ export default function UserActionsModal({ user, onClose }) {
         totalBalance: formData.totalBalance,
         commissionTotal: formData.commissionTotal,
         todayProfit: formData.todayProfit,
+        salary: formData.salary,
         canWithdraw: formData.canWithdraw,
         currentVIPLevel: {
           name: formData.vipName,
@@ -323,6 +325,19 @@ export default function UserActionsModal({ user, onClose }) {
                     type="number"
                     value={formData.todayProfit}
                     onChange={(e) => handleChange("todayProfit", Number.parseFloat(e.target.value) || 0)}
+                    className="bg-slate-800/60 border-slate-700 text-slate-100 rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-slate-300 font-semibold flex items-center gap-2 mb-2">
+                    <LucideIcons.Briefcase className="h-4 w-4 text-amber-400" />
+                    Salary
+                  </Label>
+                  <Input
+                    type="number"
+                    value={formData.salary}
+                    onChange={(e) => handleChange("salary", Number.parseFloat(e.target.value) || 0)}
                     className="bg-slate-800/60 border-slate-700 text-slate-100 rounded-xl"
                   />
                 </div>
