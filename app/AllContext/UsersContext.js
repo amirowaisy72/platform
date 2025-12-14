@@ -8,7 +8,7 @@ const UsersContext = createContext();
 export function UsersProvider({ children }) {
   const [user, setUser] = useState(null);
   const router = useRouter();
-  // const host = "${host}api"
+  // const host = "http://localhost:3001/"
   const host = "https://platform-backend-pi.vercel.app/"
 
   useEffect(() => {
@@ -291,6 +291,7 @@ export function UsersProvider({ children }) {
       const response = await fetch(`${host}api/users/getTransactions/${userId}`);
 
       const result = await response.json();
+      console.log(result.transactions)
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to fetch transactions.");

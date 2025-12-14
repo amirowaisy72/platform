@@ -599,17 +599,24 @@ router.get("/getTransactions/:userId", async (req, res) => {
 
     // 0️⃣ Check if userId is provided
     if (!userId) {
-      return res.status(201).json({ error: "userId is required." });
+      return res.status(400).json({ error: "userId is required." });
     }
 
     // 1️⃣ Validate user exists
     const userExists = await User.findById(userId);
     if (!userExists) {
-      return res.status(201).json({ error: "User not found." });
+      return res.status(404).json({ error: "User not found." });
     }
 
     // 2️⃣ Fetch all transactions for the user
-    const transactions = await TransactionHistory.find({ userId }).sort({ createdAt: -1 });
+    //    - populate walletId ONLY if it exists
+    const transactions = await TransactionHistory.find({ userId })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "walletId",
+        model: "WalletAddress",
+        match: { _id: { $ne: null } }, // populate only if walletId exists
+      });
 
     res.status(200).json({
       message: "Transactions fetched successfully",

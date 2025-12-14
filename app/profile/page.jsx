@@ -146,7 +146,7 @@ export default function ProfilePage() {
 
   // Prevent rendering until localStorage is checked
   if (!storedUser) return null
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Enhanced Header */}
@@ -236,27 +236,55 @@ export default function ProfilePage() {
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                {/* Wallet Balance */}
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600">
                       <LucideIcons.Wallet className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">Wallet Balance</span>
+                    <span className="text-sm font-medium text-slate-600">
+                      Wallet Balance
+                    </span>
                   </div>
-                  <p className="text-2xl font-bold text-green-600">${user.walletAmount.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    ${user.walletAmount.toFixed(2)}
+                  </p>
                 </div>
 
+                {/* Commission */}
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-600">
                       <LucideIcons.TrendingUp className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">Commission</span>
+                    <span className="text-sm font-medium text-slate-600">
+                      Commission
+                    </span>
                   </div>
-                  <p className="text-2xl font-bold text-blue-600">${user.commission.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    ${user.commission.toFixed(2)}
+                  </p>
                 </div>
+
+                {/* Salary */}
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-fuchsia-50 border border-purple-100">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-fuchsia-600">
+                      <LucideIcons.DollarSign className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-sm font-medium text-slate-600">
+                      Salary
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold text-purple-600">
+                    ${user.salary?.toFixed(2) || 0}
+                  </p>
+                </div>
+
               </div>
+
             </div>
           </Card>
 
@@ -409,7 +437,7 @@ export default function ProfilePage() {
       <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
         <CS />
       </Dialog>
-      
+
       {/* Enhanced Notification Panel */}
       {showNotifications && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-start justify-center pt-20">
