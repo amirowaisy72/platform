@@ -9,6 +9,7 @@ import { useDashboard } from "@/app/AllContext/DashboardContext"
 import UserActionsModal from "./user-actions-modal"
 import UserTasksModal from "./user-tasks-modal"
 import TransactionsListModal from "./transactions-list-modal"
+import RandomRewardModal from "./random-reward-modal"
 import { useToast } from "@/hooks/use-toast"
 import { useUsersContext } from "../../app/AllContext/UsersContext"
 
@@ -30,11 +31,12 @@ export default function UsersManagement() {
 
   const [showTransactionsModal, setShowTransactionsModal] = useState(false)
 
+  const [showRewardModal, setShowRewardModal] = useState(false)
+  const [selectedUserForReward, setSelectedUserForReward] = useState(null)
+
   const [userTaskCounts, setUserTaskCounts] = useState({})
   const [refreshingTasks, setRefreshingTasks] = useState({})
 
-  // ----------------------
-  // Fetch users on search / page change
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (searchTerm.trim() === "") {
@@ -77,8 +79,6 @@ export default function UsersManagement() {
     return userTaskCounts[user._id] !== undefined ? userTaskCounts[user._id] : user.NumOfTasks || 0
   }
 
-  // ----------------------
-  // Modal handlers
   const handleEditUser = (user) => {
     setSelectedUser(user)
     setShowForm(true)
@@ -117,15 +117,23 @@ export default function UsersManagement() {
     setShowTransactionsModal(false)
   }
 
+  const handleOpenReward = (user) => {
+    setSelectedUserForReward(user)
+    setShowRewardModal(true)
+  }
+
+  const handleCloseRewardModal = () => {
+    setSelectedUserForReward(null)
+    setShowRewardModal(false)
+  }
+
   const handlePageChange = (page) => {
     if (page < 1 || page > totalUserPages) return
     setCurrentPage(page)
   }
 
-  // ----------------------
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -148,7 +156,6 @@ export default function UsersManagement() {
         </Button>
       </div>
 
-      {/* Search */}
       <Card className="p-4 bg-slate-800/40 backdrop-blur-sm shadow-lg rounded-2xl border border-slate-700/50">
         <div className="relative">
           <LucideIcons.Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-500" />
@@ -164,7 +171,6 @@ export default function UsersManagement() {
         </div>
       </Card>
 
-      {/* Users Table */}
       <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-lg overflow-hidden">
         {isLoadingUsers ? (
           <div className="p-12 text-center">
@@ -229,6 +235,16 @@ export default function UsersManagement() {
 
                         <td className="px-6 py-4 text-center flex justify-center gap-2">
                           <Button
+                            onClick={() => handleOpenReward(user)}
+                            variant="ghost"
+                            size="icon"
+                            className="text-yellow-400 hover:bg-yellow-900/20 hover:text-yellow-300 rounded-lg"
+                            title="Random Reward"
+                          >
+                            <LucideIcons.Gift className="h-4 w-4" />
+                          </Button>
+
+                          <Button
                             onClick={() => handleViewTasks(user)}
                             variant="ghost"
                             size="icon"
@@ -270,7 +286,6 @@ export default function UsersManagement() {
               </table>
             </div>
 
-            {/* Pagination */}
             <div className="flex justify-center py-4 gap-3">
               <Button
                 variant="outline"
@@ -298,10 +313,16 @@ export default function UsersManagement() {
         )}
       </div>
 
-      {/* Modals */}
       {showActionsModal && <UserActionsModal user={selectedUserForActions} onClose={handleCloseActionsModal} />}
-      {showTasksModal && <UserTasksModal userId={selectedUserForTasks._id} userDetails={selectedUserForTasks} onClose={handleCloseTasksModal} />}
+      {showTasksModal && (
+        <UserTasksModal
+          userId={selectedUserForTasks._id}
+          userDetails={selectedUserForTasks}
+          onClose={handleCloseTasksModal}
+        />
+      )}
       {showTransactionsModal && <TransactionsListModal onClose={handleCloseTransactionsModal} />}
+      {showRewardModal && <RandomRewardModal user={selectedUserForReward} onClose={handleCloseRewardModal} />}
     </div>
   )
 }

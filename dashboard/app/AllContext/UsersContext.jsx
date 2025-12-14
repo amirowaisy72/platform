@@ -10,9 +10,9 @@ export function UsersProvider({ children }) {
   const router = useRouter();
   const [transactions, setTransactions] = useState(null)
 
-  // const host = "${host}api"
+  // const host = "http://localhost:3001/"
   const host = "https://platform-backend-pi.vercel.app/"
-
+// 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -371,6 +371,7 @@ export function UsersProvider({ children }) {
 
   // Create a new transaction
   const createTransactionAPI = async (data) => {
+    console.log(data)
     try {
       const response = await fetch(`${host}api/users/createTransaction`, {
         method: "POST",
@@ -416,7 +417,8 @@ export function UsersProvider({ children }) {
         transactions,
         getUserByUserId,
         fetchWalletAddress,
-        fetchTasksByUser
+        fetchTasksByUser,
+        createTransactionAPI
       }}
     >
       {children}

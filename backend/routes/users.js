@@ -531,43 +531,49 @@ router.post("/createTransaction", async (req, res) => {
   try {
     const { userId, walletId, transactionAmount, status, type } = req.body;
 
-    // 0️⃣ Required fields check
-    if (!userId || !walletId || !transactionAmount || !type) {
-      return res.status(201).json({
-        error: "userId, walletId, transactionAmount and type are required."
+    // 0️⃣ Required fields check (walletId REMOVED from required)
+    if (!userId || !transactionAmount || !type) {
+      return res.status(400).json({
+        error: "userId, transactionAmount and type are required."
       });
     }
 
     // 1️⃣ Validate user exists
     const userExists = await User.findById(userId);
     if (!userExists) {
-      return res.status(201).json({ error: "User not found." });
+      return res.status(404).json({ error: "User not found." });
     }
 
-    // 2️⃣ Validate wallet exists & belongs to user
-    const walletExists = await WalletAddress.findOne({ _id: walletId, userId });
-    if (!walletExists) {
-      return res.status(201).json({
-        error: "Invalid walletId or this wallet does not belong to the user."
+    // 2️⃣ Validate wallet ONLY if walletId is provided
+    if (walletId) {
+      const walletExists = await WalletAddress.findOne({
+        _id: walletId,
+        userId,
       });
+
+      if (!walletExists) {
+        return res.status(400).json({
+          error: "Invalid walletId or this wallet does not belong to the user."
+        });
+      }
     }
 
     // 3️⃣ Validate status (optional)
     const allowedStatus = ["Pending", "Successful", "Failed"];
     if (status && !allowedStatus.includes(status)) {
-      return res.status(201).json({ error: "Invalid status value." });
+      return res.status(400).json({ error: "Invalid status value." });
     }
 
     // 4️⃣ Validate type
     const allowedTypes = ["Debit", "Credit"];
     if (!allowedTypes.includes(type)) {
-      return res.status(201).json({ error: "Invalid transaction type." });
+      return res.status(400).json({ error: "Invalid transaction type." });
     }
 
     // 5️⃣ Create new transaction
     const newTransaction = new TransactionHistory({
       userId,
-      walletId,
+      walletId: walletId || null, // wallet optional
       transactionAmount,
       status: status || "Pending",
       type,

@@ -11,6 +11,7 @@ const TransactionHistorySchema = new mongoose.Schema(
         walletId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "WalletAddress",
+            required: false,
         },
 
         transactionAmount: {
