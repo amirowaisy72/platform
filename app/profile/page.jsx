@@ -1,20 +1,19 @@
 "use client"
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import * as LucideIcons from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { useUsersContext } from "../AllContext/UsersContext"
-import { useRouter } from 'next/navigation';
-import Bottom from '@/app/Common/Bottom/Bottom'
-import CS from '@/app/Common/CustomerService/CS'
+import { useRouter } from "next/navigation"
+import Bottom from "@/app/Common/Bottom/Bottom"
+import CS from "@/app/Common/CustomerService/CS"
 
 export default function ProfilePage() {
   const { logout } = useUsersContext()
-  const router = useRouter();
+  const router = useRouter()
   const fileInputRef = useRef(null)
 
   const [storedUser, setStoredUser] = useState("")
@@ -40,7 +39,7 @@ export default function ProfilePage() {
 
       const joinDate = new Date(userData.createdAt).toLocaleString("en-US", {
         month: "long",
-        year: "numeric"
+        year: "numeric",
       })
 
       setUser({
@@ -82,15 +81,15 @@ export default function ProfilePage() {
       name: "Deposit",
       iconName: "ArrowUpCircle",
       href: "/deposit",
-      color: "from-green-500 to-emerald-600",
-      bgColor: "from-green-50 to-emerald-50",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#a3d65c]/20 to-[#8bc34a]/20",
     },
     {
       name: "Withdraw",
       iconName: "ArrowDownCircle",
       href: "/withdrawal",
-      color: "from-blue-500 to-cyan-600",
-      bgColor: "from-blue-50 to-cyan-50",
+      color: "from-[#7cb342] to-[#689f38]",
+      bgColor: "from-[#7cb342]/20 to-[#689f38]/20",
     },
   ]
 
@@ -99,15 +98,15 @@ export default function ProfilePage() {
       name: "Personal Information",
       iconName: "User",
       href: "/personal-information",
-      color: "from-purple-500 to-violet-600",
-      bgColor: "from-purple-50 to-violet-50",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#a3d65c]/20 to-[#8bc34a]/20",
     },
     {
       name: "Payment Method",
       iconName: "CreditCard",
       href: "/payment-method",
-      color: "from-orange-500 to-red-600",
-      bgColor: "from-orange-50 to-red-50",
+      color: "from-[#7cb342] to-[#689f38]",
+      bgColor: "from-[#7cb342]/20 to-[#689f38]/20",
     },
   ]
 
@@ -116,16 +115,16 @@ export default function ProfilePage() {
       name: "Contact Us",
       iconName: "Mail",
       href: "#",
-      color: "from-teal-500 to-cyan-600",
-      bgColor: "from-teal-50 to-cyan-50",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#a3d65c]/20 to-[#8bc34a]/20",
       action: "contact",
     },
     {
       name: "Notifications",
       iconName: "Bell",
       href: "#",
-      color: "from-pink-500 to-rose-600",
-      bgColor: "from-pink-50 to-rose-50",
+      color: "from-[#7cb342] to-[#689f38]",
+      bgColor: "from-[#7cb342]/20 to-[#689f38]/20",
       action: "notifications",
     },
   ]
@@ -144,35 +143,29 @@ export default function ProfilePage() {
     logout()
   }
 
-  // Prevent rendering until localStorage is checked
   if (!storedUser) return null
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Enhanced Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg">
+    <div className="flex flex-col min-h-screen bg-[#2d3e2f]">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#3a4d3c]/80 border-b border-[#a3d65c]/20 shadow-lg">
         <div className="flex items-center justify-between p-4">
           <Link
             href="/"
-            className="flex items-center gap-3 text-slate-600 hover:text-blue-600 transition-colors rounded-xl hover:bg-blue-50 p-2"
+            className="flex items-center gap-3 text-gray-300 hover:text-[#a3d65c] transition-colors rounded-xl hover:bg-[#a3d65c]/10 p-2"
           >
             <LucideIcons.ChevronLeft className="h-6 w-6" />
             <span className="font-medium">Back</span>
           </Link>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Profile
-          </h1>
+          <h1 className="text-2xl font-bold text-white">Profile</h1>
           <div className="w-16" />
         </div>
       </header>
 
       <main className="flex-1 overflow-auto p-4 md:p-6 pb-32 lg:pb-48">
         <div className="max-w-4xl mx-auto space-y-6">
-          {/* Enhanced Profile Header Card */}
-          <Card className="relative p-8 bg-gradient-to-br from-white to-blue-50/50 shadow-2xl border border-white/20 rounded-3xl overflow-hidden">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
+          <Card className="relative p-8 bg-[#3a4d3c]/80 shadow-2xl border border-[#a3d65c]/20 rounded-3xl overflow-hidden backdrop-blur-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#a3d65c]/5 to-[#7cb342]/5"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#a3d65c]/10 to-[#7cb342]/10 rounded-full blur-2xl"></div>
 
             <div className="relative z-10">
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8">
@@ -187,7 +180,7 @@ export default function ProfilePage() {
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="relative group w-28 h-28 rounded-3xl overflow-hidden border-4 border-white shadow-2xl bg-gradient-to-br from-blue-500 to-purple-600 p-1 hover:shadow-3xl transition-shadow cursor-pointer"
+                    className="relative group w-28 h-28 rounded-3xl overflow-hidden border-4 border-[#a3d65c] shadow-2xl bg-gradient-to-br from-[#a3d65c] to-[#7cb342] p-1 hover:shadow-3xl transition-shadow cursor-pointer"
                   >
                     {profilePhotoLink ? (
                       <div className="w-full h-full rounded-2xl overflow-hidden">
@@ -200,103 +193,81 @@ export default function ProfilePage() {
                         />
                       </div>
                     ) : (
-                      <div className="w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                      <div className="w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br from-[#a3d65c] to-[#7cb342] flex items-center justify-center">
                         <LucideIcons.User className="h-12 w-12 text-white" />
                       </div>
                     )}
-                    {/* Upload overlay on hover */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center rounded-2xl">
                       <LucideIcons.Camera className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </button>
 
-                  {/* Online Status */}
-                  <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-4 border-white flex items-center justify-center">
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] rounded-full border-4 border-[#3a4d3c] flex items-center justify-center">
                     <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
                   </div>
                 </div>
 
                 <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                  <h2 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
-                    {user.name}
-                  </h2>
-                  <div className="flex items-center gap-2 mb-3 px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full">
-                    <LucideIcons.Hash className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium text-slate-700">{user.invitationCode}</span>
+                  <h2 className="text-4xl font-bold text-white mb-2">{user.name}</h2>
+                  <div className="flex items-center gap-2 mb-3 px-3 py-1 bg-[#a3d65c]/20 rounded-full border border-[#a3d65c]/30">
+                    <LucideIcons.Hash className="h-4 w-4 text-[#a3d65c]" />
+                    <span className="text-sm font-medium text-gray-200">{user.invitationCode}</span>
                   </div>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full shadow-lg">
-                      <LucideIcons.Crown className="h-5 w-5 text-white" />
-                      <span className="font-bold text-white">{user.vipLevel}</span>
+                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] rounded-full shadow-lg">
+                      <LucideIcons.Crown className="h-5 w-5 text-[#2d3e2f]" />
+                      <span className="font-bold text-[#2d3e2f]">{user.vipLevel}</span>
                     </div>
-                    <span className="text-lg font-semibold text-slate-600">{user.vipTier}</span>
+                    <span className="text-lg font-semibold text-gray-200">{user.vipTier}</span>
                   </div>
-                  <p className="text-sm text-slate-500">Member since {user.joinDate}</p>
+                  <p className="text-sm text-gray-400">Member since {user.joinDate}</p>
                 </div>
               </div>
 
-              {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-                {/* Wallet Balance */}
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600">
-                      <LucideIcons.Wallet className="h-5 w-5 text-white" />
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 rounded-xl bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] shadow-lg">
+                      <LucideIcons.Wallet className="h-6 w-6 text-[#2d3e2f]" />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">
-                      Wallet Balance
-                    </span>
+                    <span className="text-sm font-semibold text-gray-300">Wallet Balance</span>
                   </div>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-4xl font-extrabold text-[#a3d65c] drop-shadow-lg">
                     ${user.walletAmount.toFixed(2)}
                   </p>
                 </div>
 
-                {/* Commission */}
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-600">
-                      <LucideIcons.TrendingUp className="h-5 w-5 text-white" />
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 rounded-xl bg-gradient-to-r from-[#7cb342] to-[#689f38] shadow-lg">
+                      <LucideIcons.TrendingUp className="h-6 w-6 text-white" />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">
-                      Commission
-                    </span>
+                    <span className="text-sm font-semibold text-gray-300">Commission</span>
                   </div>
-                  <p className="text-2xl font-bold text-blue-600">
-                    ${user.commission.toFixed(2)}
-                  </p>
+                  <p className="text-4xl font-extrabold text-[#a3d65c] drop-shadow-lg">${user.commission.toFixed(2)}</p>
                 </div>
 
-                {/* Salary */}
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-fuchsia-50 border border-purple-100">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-fuchsia-600">
-                      <LucideIcons.DollarSign className="h-5 w-5 text-white" />
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 rounded-xl bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] shadow-lg">
+                      <LucideIcons.DollarSign className="h-6 w-6 text-[#2d3e2f]" />
                     </div>
-                    <span className="text-sm font-medium text-slate-600">
-                      Salary
-                    </span>
+                    <span className="text-sm font-semibold text-gray-300">Salary</span>
                   </div>
-                  <p className="text-2xl font-bold text-purple-600">
+                  <p className="text-4xl font-extrabold text-[#a3d65c] drop-shadow-lg">
                     ${user.salary?.toFixed(2) || 0}
                   </p>
                 </div>
-
               </div>
-
             </div>
           </Card>
 
-          {/* Enhanced Financial Section */}
-          <Card className="p-6 bg-white/70 backdrop-blur-sm shadow-xl border border-white/20 rounded-3xl">
+          <Card className="p-6 bg-[#3a4d3c]/80 backdrop-blur-sm shadow-xl border border-[#a3d65c]/20 rounded-3xl">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600">
-                <LucideIcons.Banknote className="h-6 w-6 text-white" />
+              <div className="p-3 rounded-2xl bg-gradient-to-r from-[#a3d65c] to-[#8bc34a]">
+                <LucideIcons.Banknote className="h-6 w-6 text-[#2d3e2f]" />
               </div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                My Financial
-              </h3>
+              <h3 className="text-2xl font-bold text-white">My Financial</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {financialFeatures.map((feature) => {
@@ -305,21 +276,21 @@ export default function ProfilePage() {
                   <Link key={feature.name} href={feature.href} className="w-full">
                     <Button
                       variant="ghost"
-                      className="group relative w-full h-20 p-0 overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-100"
+                      className="group relative w-full h-20 p-0 overflow-hidden rounded-2xl bg-[#3a4d3c]/50 shadow-lg hover:shadow-xl transition-all duration-300 border border-[#a3d65c]/20 hover:border-[#a3d65c]/40 hover:bg-[#3a4d3c]/70"
                     >
                       <div
-                        className={`absolute inset-0 bg-gradient-to-br ${feature.bgColor} opacity-50 group-hover:opacity-70 transition-opacity`}
+                        className={`absolute inset-0 bg-gradient-to-br ${feature.bgColor} opacity-30 group-hover:opacity-40 transition-opacity`}
                       ></div>
                       <div className="relative z-10 flex items-center justify-between w-full px-6">
                         <div className="flex items-center gap-4">
                           <div className={`p-3 rounded-xl bg-gradient-to-r ${feature.color} shadow-lg`}>
-                            {IconComponent && <IconComponent className="h-6 w-6 text-white" />}
+                            {IconComponent && <IconComponent className="h-6 w-6 text-[#2d3e2f]" />}
                           </div>
-                          <span className="text-lg font-bold text-slate-700 group-hover:text-slate-900 transition-colors">
+                          <span className="text-lg font-bold text-white group-hover:text-[#a3d65c] transition-colors">
                             {feature.name}
                           </span>
                         </div>
-                        <LucideIcons.ChevronRight className="h-6 w-6 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-1 transition-all" />
+                        <LucideIcons.ChevronRight className="h-6 w-6 text-gray-400 group-hover:text-[#a3d65c] group-hover:translate-x-1 transition-all" />
                       </div>
                     </Button>
                   </Link>
@@ -328,15 +299,12 @@ export default function ProfilePage() {
             </div>
           </Card>
 
-          {/* Enhanced Details Section */}
-          <Card className="p-6 bg-white/70 backdrop-blur-sm shadow-xl border border-white/20 rounded-3xl">
+          <Card className="p-6 bg-[#3a4d3c]/80 backdrop-blur-sm shadow-xl border border-[#a3d65c]/20 rounded-3xl">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-purple-500 to-violet-600">
-                <LucideIcons.Settings className="h-6 w-6 text-white" />
+              <div className="p-3 rounded-2xl bg-gradient-to-r from-[#a3d65c] to-[#8bc34a]">
+                <LucideIcons.Settings className="h-6 w-6 text-[#2d3e2f]" />
               </div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                My Details
-              </h3>
+              <h3 className="text-2xl font-bold text-white">My Details</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {myDetails.map((detail) => {
@@ -345,21 +313,21 @@ export default function ProfilePage() {
                   <Link key={detail.name} href={detail.href} className="w-full">
                     <Button
                       variant="ghost"
-                      className="group relative w-full h-20 p-0 overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-100"
+                      className="group relative w-full h-20 p-0 overflow-hidden rounded-2xl bg-[#3a4d3c]/50 shadow-lg hover:shadow-xl transition-all duration-300 border border-[#a3d65c]/20 hover:border-[#a3d65c]/40 hover:bg-[#3a4d3c]/70"
                     >
                       <div
-                        className={`absolute inset-0 bg-gradient-to-br ${detail.bgColor} opacity-50 group-hover:opacity-70 transition-opacity`}
+                        className={`absolute inset-0 bg-gradient-to-br ${detail.bgColor} opacity-30 group-hover:opacity-40 transition-opacity`}
                       ></div>
                       <div className="relative z-10 flex items-center justify-between w-full px-6">
                         <div className="flex items-center gap-4">
                           <div className={`p-3 rounded-xl bg-gradient-to-r ${detail.color} shadow-lg`}>
-                            {IconComponent && <IconComponent className="h-6 w-6 text-white" />}
+                            {IconComponent && <IconComponent className="h-6 w-6 text-[#2d3e2f]" />}
                           </div>
-                          <span className="text-lg font-bold text-slate-700 group-hover:text-slate-900 transition-colors">
+                          <span className="text-lg font-bold text-white group-hover:text-[#a3d65c] transition-colors">
                             {detail.name}
                           </span>
                         </div>
-                        <LucideIcons.ChevronRight className="h-6 w-6 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-1 transition-all" />
+                        <LucideIcons.ChevronRight className="h-6 w-6 text-gray-400 group-hover:text-[#a3d65c] group-hover:translate-x-1 transition-all" />
                       </div>
                     </Button>
                   </Link>
@@ -368,15 +336,12 @@ export default function ProfilePage() {
             </div>
           </Card>
 
-          {/* Enhanced Other Section */}
-          <Card className="p-6 bg-white/70 backdrop-blur-sm shadow-xl border border-white/20 rounded-3xl">
+          <Card className="p-6 bg-[#3a4d3c]/80 backdrop-blur-sm shadow-xl border border-[#a3d65c]/20 rounded-3xl">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-600">
-                <LucideIcons.MoreHorizontal className="h-6 w-6 text-white" />
+              <div className="p-3 rounded-2xl bg-gradient-to-r from-[#a3d65c] to-[#8bc34a]">
+                <LucideIcons.MoreHorizontal className="h-6 w-6 text-[#2d3e2f]" />
               </div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                Support & Settings
-              </h3>
+              <h3 className="text-2xl font-bold text-white">Support & Settings</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {otherSections.map((section) => {
@@ -395,21 +360,21 @@ export default function ProfilePage() {
                     <Button
                       variant="ghost"
                       onClick={handleClick}
-                      className="group relative w-full h-20 p-0 overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-100"
+                      className="group relative w-full h-20 p-0 overflow-hidden rounded-2xl bg-[#3a4d3c]/50 shadow-lg hover:shadow-xl transition-all duration-300 border border-[#a3d65c]/20 hover:border-[#a3d65c]/40 hover:bg-[#3a4d3c]/70"
                     >
                       <div
-                        className={`absolute inset-0 bg-gradient-to-br ${section.bgColor} opacity-50 group-hover:opacity-70 transition-opacity`}
+                        className={`absolute inset-0 bg-gradient-to-br ${section.bgColor} opacity-30 group-hover:opacity-40 transition-opacity`}
                       ></div>
                       <div className="relative z-10 flex items-center justify-between w-full px-6">
                         <div className="flex items-center gap-4">
                           <div className={`p-3 rounded-xl bg-gradient-to-r ${section.color} shadow-lg`}>
-                            {IconComponent && <IconComponent className="h-6 w-6 text-white" />}
+                            {IconComponent && <IconComponent className="h-6 w-6 text-[#2d3e2f]" />}
                           </div>
-                          <span className="text-lg font-bold text-slate-700 group-hover:text-slate-900 transition-colors">
+                          <span className="text-lg font-bold text-white group-hover:text-[#a3d65c] transition-colors">
                             {section.name}
                           </span>
                         </div>
-                        <LucideIcons.ChevronRight className="h-6 w-6 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-1 transition-all" />
+                        <LucideIcons.ChevronRight className="h-6 w-6 text-gray-400 group-hover:text-[#a3d65c] group-hover:translate-x-1 transition-all" />
                       </div>
                     </Button>
                   </div>
@@ -418,14 +383,16 @@ export default function ProfilePage() {
             </div>
           </Card>
 
-          {/* Enhanced Logout Button */}
           <div className="mt-8 mb-40 lg:mb-12">
-            <Button onClick={handleLogout} className="group w-full py-4 text-lg font-bold bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white shadow-2xl rounded-2xl transition-all duration-300 transform hover:scale-105 border border-red-200">
+            <Button
+              onClick={handleLogout}
+              className="group w-full py-4 text-lg font-bold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-2xl rounded-2xl transition-all duration-300 transform hover:scale-105 border border-red-500/30"
+            >
               <div className="flex items-center justify-center gap-3">
                 <div className="p-2 rounded-xl bg-white/20">
                   <LucideIcons.LogOut className="h-6 w-6" />
                 </div>
-                <span>{loggingout ? 'Logging Out...' : 'Logout'}</span>
+                <span>{loggingout ? "Logging Out..." : "Logout"}</span>
                 <LucideIcons.ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </div>
             </Button>
@@ -433,52 +400,44 @@ export default function ProfilePage() {
         </div>
       </main>
 
-      {/* Contact Support Dialog */}
-      <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
-        <CS />
-      </Dialog>
-
-      {/* Enhanced Notification Panel */}
       {showNotifications && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-start justify-center pt-20">
-          <Card className="w-full max-w-md mx-4 bg-white/95 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl overflow-hidden animate-scale-in">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <LucideIcons.Bell className="h-5 w-5" />
-                  Notifications
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowNotifications(false)}
-                  className="text-white hover:bg-white/20 rounded-xl"
-                >
-                  <LucideIcons.X className="h-4 w-4" />
-                </Button>
+        <div className="fixed inset-x-0 bottom-20 mx-4 mb-4 p-6 bg-[#3a4d3c] border border-[#a3d65c]/30 rounded-3xl shadow-2xl backdrop-blur-xl z-40 max-w-2xl lg:mx-auto animate-in slide-in-from-bottom">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-[#a3d65c]/20">
+                <LucideIcons.Bell className="h-6 w-6 text-[#a3d65c]" />
               </div>
+              <h3 className="text-xl font-bold text-white">Notifications</h3>
             </div>
-            <div className="p-4">
-              {notifications.length > 0 ? (
-                <ul className="space-y-3">
-                  {notifications.map((notification, index) => (
-                    <li
-                      key={index}
-                      className="text-sm text-slate-700 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 hover:shadow-md transition-all duration-200"
-                    >
-                      {notification}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-slate-500 text-sm text-center py-4">No new notifications.</p>
-              )}
-            </div>
-          </Card>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowNotifications(false)}
+              className="text-gray-400 hover:text-white hover:bg-[#a3d65c]/20"
+            >
+              <LucideIcons.X className="h-5 w-5" />
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {notifications.map((notification, index) => (
+              <div key={index} className="p-4 bg-[#2d3e2f]/50 rounded-2xl border border-[#a3d65c]/20 text-gray-200">
+                {notification}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Enhanced Bottom Navigation */}
+      <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
+        <DialogContent className="bg-[#3a4d3c] border-[#a3d65c]/30 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white">Contact Support</DialogTitle>
+            <DialogDescription className="text-gray-300">Get in touch with our support team</DialogDescription>
+          </DialogHeader>
+          <CS />
+        </DialogContent>
+      </Dialog>
+
       <Bottom />
     </div>
   )

@@ -19,9 +19,9 @@ export default function TermsAndConditionsPage() {
       id: 1,
       title: "Regulations (Clauses)",
       icon: LucideIcons.FileText,
-      color: "from-blue-500 to-cyan-600",
-      bgColor: "from-blue-50 to-cyan-50",
-      borderColor: "border-blue-100",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#3a4d3c] to-[#354a37]",
+      borderColor: "border-[#a3d65c]/20",
       content: [
         {
           number: "1.1",
@@ -37,9 +37,9 @@ export default function TermsAndConditionsPage() {
       id: 2,
       title: "Withdrawal",
       icon: LucideIcons.ArrowDownCircle,
-      color: "from-green-500 to-emerald-600",
-      bgColor: "from-green-50 to-emerald-50",
-      borderColor: "border-green-100",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#3a4d3c] to-[#354a37]",
+      borderColor: "border-[#a3d65c]/20",
       content: [
         {
           number: "2.1",
@@ -63,9 +63,9 @@ export default function TermsAndConditionsPage() {
       id: 3,
       title: "Funds",
       icon: LucideIcons.Wallet,
-      color: "from-purple-500 to-violet-600",
-      bgColor: "from-purple-50 to-violet-50",
-      borderColor: "border-purple-100",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#3a4d3c] to-[#354a37]",
+      borderColor: "border-[#a3d65c]/20",
       content: [
         {
           number: "3.1",
@@ -85,9 +85,9 @@ export default function TermsAndConditionsPage() {
       id: 4,
       title: "Account Security",
       icon: LucideIcons.Shield,
-      color: "from-orange-500 to-red-600",
-      bgColor: "from-orange-50 to-red-50",
-      borderColor: "border-orange-100",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#3a4d3c] to-[#354a37]",
+      borderColor: "border-[#a3d65c]/20",
       content: [
         {
           number: "4.1",
@@ -111,9 +111,9 @@ export default function TermsAndConditionsPage() {
       id: 5,
       title: "Common Applications",
       icon: LucideIcons.Settings,
-      color: "from-indigo-500 to-purple-600",
-      bgColor: "from-indigo-50 to-purple-50",
-      borderColor: "border-indigo-100",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#3a4d3c] to-[#354a37]",
+      borderColor: "border-[#a3d65c]/20",
       content: [
         {
           number: "5.1",
@@ -137,9 +137,9 @@ export default function TermsAndConditionsPage() {
       id: 6,
       title: "Combination Goods",
       icon: LucideIcons.Package,
-      color: "from-teal-500 to-cyan-600",
-      bgColor: "from-teal-50 to-cyan-50",
-      borderColor: "border-teal-100",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#3a4d3c] to-[#354a37]",
+      borderColor: "border-[#a3d65c]/20",
       content: [
         {
           number: "6.1",
@@ -175,9 +175,9 @@ export default function TermsAndConditionsPage() {
       id: 7,
       title: "Deposit",
       icon: LucideIcons.ArrowUpCircle,
-      color: "from-pink-500 to-rose-600",
-      bgColor: "from-pink-50 to-rose-50",
-      borderColor: "border-pink-100",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#3a4d3c] to-[#354a37]",
+      borderColor: "border-[#a3d65c]/20",
       content: [
         {
           number: "7.1",
@@ -201,9 +201,9 @@ export default function TermsAndConditionsPage() {
       id: 8,
       title: "Work with Developers",
       icon: LucideIcons.Code,
-      color: "from-yellow-500 to-orange-600",
-      bgColor: "from-yellow-50 to-orange-50",
-      borderColor: "border-yellow-100",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#3a4d3c] to-[#354a37]",
+      borderColor: "border-[#a3d65c]/20",
       content: [
         {
           number: "8.1",
@@ -219,9 +219,9 @@ export default function TermsAndConditionsPage() {
       id: 9,
       title: "Business Hours",
       icon: LucideIcons.Clock,
-      color: "from-emerald-500 to-teal-600",
-      bgColor: "from-emerald-50 to-teal-50",
-      borderColor: "border-emerald-100",
+      color: "from-[#a3d65c] to-[#8bc34a]",
+      bgColor: "from-[#3a4d3c] to-[#354a37]",
+      borderColor: "border-[#a3d65c]/20",
       content: [
         {
           number: "9.1",
@@ -236,20 +236,18 @@ export default function TermsAndConditionsPage() {
   ]
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#2d3e2f] via-[#354a37] to-[#3a4d3c]">
       {/* Enhanced Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#2d3e2f]/90 border-b border-[#a3d65c]/20 shadow-lg">
         <div className="flex items-center justify-between p-4">
           <Link
             href="/"
-            className="flex items-center gap-2 sm:gap-3 text-slate-600 hover:text-blue-600 transition-colors rounded-xl hover:bg-blue-50 p-2"
+            className="flex items-center gap-2 sm:gap-3 text-white hover:text-[#a3d65c] transition-colors rounded-xl hover:bg-[#3a4d3c] p-2"
           >
             <LucideIcons.ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
             <span className="font-medium text-sm sm:text-base">Back</span>
           </Link>
-          <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Terms & Conditions
-          </h1>
+          <h1 className="text-lg sm:text-2xl font-bold text-[#a3d65c]">Terms & Conditions</h1>
           <div className="w-12 sm:w-16" />
         </div>
       </header>
@@ -258,14 +256,12 @@ export default function TermsAndConditionsPage() {
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-8 sm:mb-12">
-            <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full">
-              <LucideIcons.FileText className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
-              <span className="text-blue-800 font-semibold text-sm sm:text-base">Legal Agreement</span>
+            <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#3a4d3c] rounded-full border border-[#a3d65c]/20">
+              <LucideIcons.FileText className="h-4 w-4 sm:h-6 sm:w-6 text-[#a3d65c]" />
+              <span className="text-[#a3d65c] font-semibold text-sm sm:text-base">Legal Agreement</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-              Terms & Conditions
-            </h2>
-            <p className="text-base sm:text-lg text-slate-600 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-white">Terms & Conditions</h2>
+            <p className="text-base sm:text-lg text-gray-300 px-4">
               Please read these terms carefully before using our platform
             </p>
           </div>
@@ -281,9 +277,9 @@ export default function TermsAndConditionsPage() {
                 >
                   <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <div className={`p-2 sm:p-3 rounded-2xl bg-gradient-to-r ${section.color} shadow-lg`}>
-                      <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                      <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-[#2d3e2f]" />
                     </div>
-                    <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                    <h2 className="text-xl sm:text-2xl font-bold text-white">
                       {section.id}. {section.title}
                     </h2>
                   </div>
@@ -292,17 +288,17 @@ export default function TermsAndConditionsPage() {
                     {section.content.map((item, index) => (
                       <div
                         key={index}
-                        className="p-3 sm:p-4 bg-white/70 backdrop-blur-sm rounded-2xl border border-white/20 hover:bg-white/80 transition-all duration-200"
+                        className="p-3 sm:p-4 bg-[#2d3e2f]/50 backdrop-blur-sm rounded-2xl border border-[#a3d65c]/10 hover:bg-[#2d3e2f]/70 transition-all duration-200"
                       >
                         <div className="flex gap-3 sm:gap-4">
                           <div className="flex-shrink-0">
                             <span
-                              className={`inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r ${section.color} text-white text-xs sm:text-sm font-bold`}
+                              className={`inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r ${section.color} text-[#2d3e2f] text-xs sm:text-sm font-bold`}
                             >
                               {item.number}
                             </span>
                           </div>
-                          <p className="text-sm sm:text-base text-slate-700 leading-relaxed flex-1">{item.text}</p>
+                          <p className="text-sm sm:text-base text-gray-200 leading-relaxed flex-1">{item.text}</p>
                         </div>
                       </div>
                     ))}
@@ -313,25 +309,25 @@ export default function TermsAndConditionsPage() {
           </div>
 
           {/* Enhanced Footer Notice */}
-          <Card className="mt-8 sm:mt-12 p-4 sm:p-6 bg-gradient-to-r from-slate-100 to-blue-100 border border-slate-200 rounded-3xl text-center">
+          <Card className="mt-8 sm:mt-12 p-4 sm:p-6 bg-gradient-to-r from-[#3a4d3c] to-[#2d3e2f] border border-[#a3d65c]/20 rounded-3xl text-center">
             <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3">
-              <div className="p-2 rounded-xl bg-gradient-to-r from-slate-500 to-slate-600">
-                <LucideIcons.Scale className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              <div className="p-2 rounded-xl bg-gradient-to-r from-[#a3d65c] to-[#8bc34a]">
+                <LucideIcons.Scale className="h-4 w-4 sm:h-5 sm:w-5 text-[#2d3e2f]" />
               </div>
-              <span className="text-base sm:text-lg font-semibold text-slate-700">Legal Notice</span>
+              <span className="text-base sm:text-lg font-semibold text-white">Legal Notice</span>
             </div>
-            <p className="text-sm sm:text-base text-slate-600 font-medium">
+            <p className="text-sm sm:text-base text-gray-300 font-medium">
               The final right of interpretation belongs to Company Group
             </p>
           </Card>
 
           {/* Quick Navigation */}
-          <Card className="mt-6 sm:mt-8 p-4 sm:p-6 bg-white/70 backdrop-blur-sm shadow-xl border border-white/20 rounded-3xl">
+          <Card className="mt-6 sm:mt-8 p-4 sm:p-6 bg-[#3a4d3c] backdrop-blur-sm shadow-xl border border-[#a3d65c]/20 rounded-3xl">
             <div className="flex items-center gap-2 sm:gap-3 mb-4">
-              <div className="p-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600">
-                <LucideIcons.Navigation className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              <div className="p-2 rounded-xl bg-gradient-to-r from-[#a3d65c] to-[#8bc34a]">
+                <LucideIcons.Navigation className="h-4 w-4 sm:h-5 sm:w-5 text-[#2d3e2f]" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-800">Quick Navigation</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-white">Quick Navigation</h3>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {sections.slice(0, 8).map((section) => {
@@ -340,7 +336,7 @@ export default function TermsAndConditionsPage() {
                   <Button
                     key={section.id}
                     variant="ghost"
-                    className="group h-auto p-3 sm:p-4 rounded-2xl bg-white/50 hover:bg-white/80 border border-white/20 transition-all duration-200"
+                    className="group h-auto p-3 sm:p-4 rounded-2xl bg-[#2d3e2f]/50 hover:bg-[#2d3e2f]/80 border border-[#a3d65c]/10 transition-all duration-200"
                     onClick={() => {
                       const element = document.getElementById(`section-${section.id}`)
                       element?.scrollIntoView({ behavior: "smooth" })
@@ -350,9 +346,9 @@ export default function TermsAndConditionsPage() {
                       <div
                         className={`p-2 rounded-xl bg-gradient-to-r ${section.color} group-hover:scale-110 transition-transform`}
                       >
-                        <Icon className="h-4 w-4 text-white" />
+                        <Icon className="h-4 w-4 text-[#2d3e2f]" />
                       </div>
-                      <span className="text-xs sm:text-sm font-medium text-slate-700 group-hover:text-slate-900">
+                      <span className="text-xs sm:text-sm font-medium text-gray-200 group-hover:text-white">
                         {section.title}
                       </span>
                     </div>
@@ -365,7 +361,7 @@ export default function TermsAndConditionsPage() {
       </main>
 
       {/* Enhanced Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-white/20 p-3 sm:p-4 shadow-2xl z-40">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#2d3e2f]/90 backdrop-blur-xl border-t border-[#a3d65c]/20 p-3 sm:p-4 shadow-2xl z-40">
         <div className="flex justify-around items-center max-w-md mx-auto">
           {bottomNavLinks.map((link) => {
             const Icon = link.icon
@@ -374,14 +370,15 @@ export default function TermsAndConditionsPage() {
               <Link key={link.name} href={link.href} className="flex-1">
                 <Button
                   variant="ghost"
-                  className={`flex flex-col items-center gap-1 sm:gap-2 w-full p-2 sm:p-3 rounded-2xl transition-all duration-300 ${isActive
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transform scale-105"
-                      : "text-slate-600 hover:text-blue-600 hover:bg-blue-50"
-                    }`}
+                  className={`flex flex-col items-center gap-1 sm:gap-2 w-full p-2 sm:p-3 rounded-2xl transition-all duration-300 ${
+                    isActive
+                      ? "bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] text-[#2d3e2f] shadow-lg transform scale-105"
+                      : "text-gray-300 hover:text-[#a3d65c] hover:bg-[#3a4d3c]"
+                  }`}
                 >
                   <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                   <span className="text-xs font-semibold">{link.name}</span>
-                  {isActive && <div className="w-1 h-1 bg-white rounded-full"></div>}
+                  {isActive && <div className="w-1 h-1 bg-[#2d3e2f] rounded-full"></div>}
                 </Button>
               </Link>
             )
