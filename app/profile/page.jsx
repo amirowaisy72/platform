@@ -224,6 +224,23 @@ export default function ProfilePage() {
                 </div>
               </div>
 
+              {/* Credit Score */}
+              <div className="w-full mb-8">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-gray-300">Credit Score</span>
+                  <span className="text-sm font-bold text-[#a3d65c]">
+                    {user.creditScore}/100
+                  </span>
+                </div>
+
+                <div className="h-2 bg-[#2d3e2f] rounded-full overflow-hidden border border-[#a3d65c]/20">
+                  <div
+                    className="h-full bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] rounded-full transition-all duration-500"
+                    style={{ width: `${user.creditScore}%` }}   
+                  ></div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">
                   <div className="flex items-center gap-3 mb-3">

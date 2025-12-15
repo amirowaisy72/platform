@@ -8,8 +8,8 @@ const UsersContext = createContext();
 export function UsersProvider({ children }) {
   const [user, setUser] = useState(null);
   const router = useRouter();
-  // const host = "http://localhost:3001/"
-  const host = "https://platform-backend-pi.vercel.app/"
+  const host = "http://localhost:3001/"
+  // const host = "https://platform-backend-pi.vercel.app/"
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -400,10 +400,25 @@ export function UsersProvider({ children }) {
     }
   };
 
+  const getCombos = async (userId) => {
+    try {
+      const response = await fetch(`${host}api/combo/user/${userId}`);
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || "Failed to fetch combos");
+
+      return data.data || []; // Assuming the combos data is under the `data` key
+    } catch (error) {
+      console.error("Get Combos Error:", error);
+      return [];
+    }
+  };
+
   return (
     <UsersContext.Provider
       value={{
         user,
+        setUser,
         submitNewUser,
         logout,
         isLoggedIn: !!user,
@@ -420,7 +435,8 @@ export function UsersProvider({ children }) {
         updateWalletAddressAPI,
         deleteWalletAddressAPI,
         getWalletAddressesAPI,
-        getWallets
+        getWallets,
+        getCombos
       }}
     >
       {children}

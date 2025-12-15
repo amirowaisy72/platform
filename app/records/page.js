@@ -16,9 +16,8 @@ export default function RecordsPage() {
   const [showNotifications, setShowNotifications] = useState(false)
   const [loading, setLoading] = useState(false)
   const [taskRecords, setTaskRecords] = useState([])
-
-  const { user, fetchTasks } = useUsersContext()
   const [totalTasks, setTotalTasks] = useState(0)
+  const { user, fetchTasks, getCombos } = useUsersContext()
 
   const notifications = [
     "🎉 Important update regarding service changes. Please check your inbox for details.",
@@ -30,66 +29,143 @@ export default function RecordsPage() {
     const loadTasks = async () => {
       if (!user?._id) return
       setLoading(true)
-      const tasks = await fetchTasks(user._id)
-      const vipLevel = user.currentVIPLevel?.number || 1
 
+      // ==============================
+      // FETCH DATA
+      // ==============================
+      const tasks = await fetchTasks(user._id)
+      const combos = await getCombos(user._id)
+
+      // ==============================
+      // VIP LOGIC
+      // ==============================
+      const vipLevel = user.currentVIPLevel?.number || 1
       let commissionRate = 0.004
+      let totalTasksCount = 40
+
       switch (vipLevel) {
         case 1:
           commissionRate = 0.004
-          setTotalTasks(40)
+          totalTasksCount = 40
           break
         case 2:
           commissionRate = 0.006
-          setTotalTasks(45)
+          totalTasksCount = 45
           break
         case 3:
           commissionRate = 0.008
-          setTotalTasks(50)
+          totalTasksCount = 50
           break
         case 4:
           commissionRate = 0.01
-          setTotalTasks(55)
+          totalTasksCount = 55
           break
         default:
           commissionRate = 0.004
       }
 
-      const formattedTasks = tasks.map((t) => {
-        const productValue = t.product?.productValue || 0
-        const calculatedCommission = +(productValue * commissionRate).toFixed(2)
+      setTotalTasks(totalTasksCount)
+
+      // ==============================
+      // REGULAR TASKS (combo = null)
+      // ==============================
+      const formattedTasks = tasks
+        .filter(t => t.combo == null)
+        .map(t => {
+          const value = t.product?.productValue || 0
+          return {
+            id: t._id,
+            productName: t.product?.productName || "Unnamed Product",
+            taskCode: t.product?.taskCode || "N/A",
+            productImage: t.product?.productImage?.url || "/placeholder.svg",
+            value,
+            commission: +(value * commissionRate).toFixed(2),
+            status: t.status,
+            submittedAt: t.createdAt,
+            completedAt: t.updatedAt,
+          }
+        })
+
+      // ==============================
+      // COMBOS
+      // comboAt = bottom se kitne tasks SKIP
+      // ==============================
+      const formattedCombos = combos.map(combo => {
+        const rate = combo.commission || 0; // assume this is in % (e.g., 9 for 9%)
+
         return {
-          id: t._id,
-          taskCode: t.product?.taskCode || "N/A",
-          productName: t.product?.productName || "Unnamed Product",
-          productImage: t.product?.productImage?.url || "/placeholder.svg",
-          value: productValue,
-          commission: calculatedCommission,
-          status: t.status,
-          submittedAt: t.createdAt,
-          completedAt: t.updatedAt,
-        }
+          id: combo._id,
+          isCombo: true,
+          comboAt: combo.comboAt, // skip from bottom
+          status: combo.status,
+          submittedAt: combo.createdAt,
+          comboProducts: combo.Products.map(p => ({
+            taskCode: p.taskCode,
+            productName: p.productName,
+            productImage: p.productImage?.url || "/placeholder.svg",
+            value: p.productValue,
+            commission: +((p.productValue * rate) / 100).toFixed(2), // ✅ percentage-based commission
+          })),
+          totalValue: combo.comboPrice,
+          totalCommission: combo.Products.reduce(
+            (sum, p) => sum + +((p.productValue * rate) / 100).toFixed(2),
+            0
+          ),
+        };
+      });
+
+
+      // ==============================
+      // MERGE TASKS + COMBOS
+      // ==============================
+      let mergedRecords = [...formattedTasks]
+
+      formattedCombos.forEach(combo => {
+        const insertIndex = Math.max(0, (mergedRecords.length + 1) - combo.comboAt)
+        mergedRecords.splice(insertIndex, 0, combo)
       })
 
-      setTaskRecords(formattedTasks)
+      setTaskRecords(mergedRecords)
       setLoading(false)
     }
 
     loadTasks()
-  }, [user, fetchTasks])
+  }, [user, fetchTasks, getCombos])
 
-  const filteredRecords = taskRecords.filter((record) => {
-    const matchesSearch =
-      record.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.taskCode.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = filterStatus === "all" || record.status === filterStatus
-    return matchesSearch && matchesStatus
+
+  // ==============================
+  // FILTERING
+  // ==============================
+  const filteredRecords = taskRecords.filter(record => {
+    if (record.isCombo) {
+      const matchesSearch = record.comboProducts.some(
+        p =>
+          p.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.taskCode.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      const matchesStatus = filterStatus === "all" || record.status === filterStatus
+      return matchesSearch && matchesStatus
+    } else {
+      const matchesSearch =
+        record.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        record.taskCode.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesStatus = filterStatus === "all" || record.status === filterStatus
+      return matchesSearch && matchesStatus
+    }
   })
 
-  const completedTasks = taskRecords.filter((r) => r.status === "completed").length
+  const completedTasks = taskRecords.filter((r) => !r.isCombo && r.status === "completed").length
   const processingTasks = taskRecords.filter((r) => r.status === "processing").length
   const failedTasks = taskRecords.filter((r) => r.status === "failed").length
-  const totalEarnings = taskRecords.filter((r) => r.status === "completed").reduce((sum, r) => sum + r.commission, 0)
+  const totalEarnings = taskRecords
+    .filter((r) => r.status === "completed")
+    .reduce((sum, r) => {
+      // Handle both regular tasks and combo tasks for earnings
+      if (r.isCombo) {
+        return sum + r.totalCommission
+      }
+      return sum + r.commission
+    }, 0)
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -115,7 +191,12 @@ export default function RecordsPage() {
           </Badge>
         )
       default:
-        return null
+        return (
+          <Badge className="bg-gray-500 text-white">
+            <LucideIcons.AlertCircle className="h-3 w-3 mr-1" />
+            Pending
+          </Badge>
+        )
     }
   }
 
@@ -292,77 +373,146 @@ export default function RecordsPage() {
               {loading ? (
                 <p className="text-center text-gray-400 py-6">Loading tasks...</p>
               ) : filteredRecords.length > 0 ? (
-                filteredRecords.map((record) => (
-                  <Card
-                    key={record.id}
-                    className="p-4 bg-[#2d3e2f] border border-[#4a5d4c] rounded-2xl hover:shadow-lg hover:border-[#a3d65c] transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="relative overflow-hidden rounded-xl border-2 border-[#4a5d4c] shadow-md">
-                        <Image
-                          src={record.productImage || "/placeholder.svg"}
-                          alt={record.productName}
-                          width={60}
-                          height={60}
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-bold text-white truncate">{record.productName}</h3>
+                filteredRecords.map((record) => {
+                  if (record.isCombo) {
+                    return (
+                      <Card
+                        key={record.id}
+                        className="p-5 bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c] rounded-2xl hover:shadow-2xl hover:border-[#8bc34a] transition-all duration-300"
+                      >
+                        {/* Combo Header */}
+                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#4a5d4c]">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-xl bg-[#a3d65c]">
+                              <LucideIcons.Package className="h-5 w-5 text-[#1a2617]" />
+                            </div>
+                            <div>
+                              <h3 className="text-xl font-bold text-white">Combo Task Group</h3>
+                              <p className="text-sm text-gray-400">{record.comboProducts.length} Products</p>
+                            </div>
+                          </div>
                           {getStatusBadge(record.status)}
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm text-gray-300">
-                          <div>
-                            <span className="font-medium">Task Code:</span>
-                            <p className="text-[#a3d65c] font-mono">{record.taskCode}</p>
+
+                        {/* Combo Products Grid */}
+                        <div className="space-y-3 mb-4">
+                          {record.comboProducts.map((product, index) => (
+                            <div
+                              key={`${record.id}-${product.taskCode}`}
+                              className="flex items-center gap-3 p-3 bg-[#2d3e2f] rounded-xl border border-[#4a5d4c]"
+                            >
+                              <div className="relative overflow-hidden rounded-lg border border-[#4a5d4c]">
+                                <Image
+                                  src={product.productImage || "/placeholder.svg"}
+                                  alt={product.productName}
+                                  width={50}
+                                  height={50}
+                                  className="object-cover"
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-semibold text-white truncate">{product.productName}</h4>
+                                <div className="flex flex-wrap gap-3 text-xs text-gray-400 mt-1">
+                                  <span>
+                                    Code: <span className="text-[#a3d65c] font-mono">{product.taskCode}</span>
+                                  </span>
+                                  <span>
+                                    Value: <span className="text-white font-semibold">${product.value.toFixed(2)}</span>
+                                  </span>
+                                  <span>
+                                    Commission:{" "}
+                                    <span className="text-[#8bc34a] font-semibold">
+                                      ${product.commission.toFixed(2)}
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Combo Summary */}
+                        <div className="flex items-center justify-between p-4 bg-[#2d3e2f] rounded-xl border border-[#a3d65c]">
+                          <div className="grid grid-cols-2 gap-4 flex-1">
+                            <div>
+                              <span className="text-sm font-medium text-gray-300">Total Value:</span>
+                              <p className="text-lg font-bold text-white">${record.totalValue.toFixed(2)}</p>
+                            </div>
+                            <div>
+                              <span className="text-sm font-medium text-gray-300">Total Commission:</span>
+                              <p className="text-lg font-bold text-[#a3d65c]">${record.totalCommission.toFixed(2)}</p>
+                            </div>
                           </div>
-                          <div>
-                            <span className="font-medium">Value:</span>
-                            <p className="text-white font-semibold">${record.value.toFixed(2)}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">Commission:</span>
-                            <p className="text-[#8bc34a] font-semibold">${record.commission.toFixed(2)}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">Submitted:</span>
-                            <p className="text-gray-400">{new Date(record.submittedAt).toLocaleDateString()}</p>
+                          <div className="text-right">
+                            <span className="text-sm font-medium text-gray-300">Submitted:</span>
+                            <p className="text-sm text-gray-400">{new Date(record.submittedAt).toLocaleDateString()}</p>
                           </div>
                         </div>
-                        {record.completedAt && (
-                          <div className="mt-2 text-sm text-gray-300">
-                            <span className="font-medium">Completed:</span>
-                            <span className="ml-1 text-[#8bc34a]">{new Date(record.completedAt).toLocaleString()}</span>
+                      </Card>
+                    )
+                  }
+
+                  // Regular task card
+                  return (
+                    <Card
+                      key={record.id}
+                      className="p-4 bg-[#2d3e2f] border border-[#4a5d4c] rounded-2xl hover:shadow-lg hover:border-[#a3d65c] transition-all duration-300"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="relative overflow-hidden rounded-xl border-2 border-[#4a5d4c] shadow-md">
+                          <Image
+                            src={record.productImage || "/placeholder.svg"}
+                            alt={record.productName}
+                            width={80}
+                            height={80}
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0 space-y-2">
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <h3 className="text-lg font-bold text-white truncate">{record.productName}</h3>
+                            {getStatusBadge(record.status)}
                           </div>
-                        )}
+                          <div className="flex flex-wrap gap-4 text-sm text-gray-400">
+                            <span className="flex items-center gap-1">
+                              <LucideIcons.FileText className="h-4 w-4 text-[#a3d65c]" />
+                              <span className="font-mono text-[#a3d65c]">{record.taskCode}</span>
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <LucideIcons.DollarSign className="h-4 w-4 text-white" />
+                              <span className="text-white font-semibold">${record.value.toFixed(2)}</span>
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <LucideIcons.TrendingUp className="h-4 w-4 text-[#8bc34a]" />
+                              <span className="text-[#8bc34a] font-semibold">${record.commission.toFixed(2)}</span>
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <LucideIcons.Clock className="h-3 w-3" />
+                              Submitted: {new Date(record.submittedAt).toLocaleDateString()}
+                            </span>
+                            {record.status === "completed" && record.completedAt && (
+                              <span className="flex items-center gap-1">
+                                <LucideIcons.CheckCircle className="h-3 w-3" />
+                                Completed: {new Date(record.completedAt).toLocaleDateString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                ))
+                    </Card>
+                  )
+                })
               ) : (
-                <Card className="p-12 text-center bg-[#2d3e2f] border border-[#4a5d4c] rounded-2xl">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="p-4 rounded-full bg-[#3a4d3c]">
-                      <LucideIcons.Search className="h-8 w-8 text-gray-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-300 mb-2">No Records Found</h3>
-                      <p className="text-gray-400">
-                        {searchTerm || filterStatus !== "all"
-                          ? "Try adjusting your search or filter criteria."
-                          : "You haven't submitted any tasks yet. Start optimizing products to see your records here!"}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
+                <p className="text-center text-gray-400 py-6">No tasks found matching your criteria.</p>
               )}
             </div>
           </Card>
         </div>
       </main>
 
-      {/* Bottom Navigation */}
+      {/* Footer */}
       <Bottom />
     </div>
   )

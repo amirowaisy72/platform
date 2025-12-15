@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema(
       publicId: { type: String, required: true }
     },
 
-    taskCode: { type: String, required: true, unique: true },
+    taskCode: { type: String, required: true },
   },
   { timestamps: true }
 );

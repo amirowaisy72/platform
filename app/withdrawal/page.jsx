@@ -111,7 +111,7 @@ export default function WithdrawalPage() {
 
             {/* History Tab */}
             <TabsContent value="history" className="mt-0">
-              <TransactionHistory />
+              <TransactionHistory page="Withdrawal" />
             </TabsContent>
           </Tabs>
         </div>

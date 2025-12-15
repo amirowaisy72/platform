@@ -48,7 +48,7 @@ const ConfettiParticles = ({ isVisible }) => {
 }
 
 const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmissionDialog, user, setTasksState }) => {
-  const { saveTask } = useUsersContext()
+  const { saveTask, setUser } = useUsersContext()
   const [infoMessage, setInfoMessage] = useState("")
   const [productsWithValue, setProductsWithValue] = useState([])
   const [totalComboValue, setTotalComboValue] = useState(0)
@@ -87,6 +87,7 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
     setSubmitting(true)
 
     if (user.walletBalance < 0) {
+      console.log("Wallet balance : ", user.walletBalance)
       setShowCSDialog(true)
       setSubmitting(false)
       return
@@ -106,6 +107,7 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
         setShowConfetti(false)
         setInfoMessage("")
         setTasksState((prevState) => prevState + 1)
+        setUser(result.user)
       }
     } catch (err) {
       console.error("handleSubmitTask error:", err)

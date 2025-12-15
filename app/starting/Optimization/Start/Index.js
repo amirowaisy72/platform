@@ -10,7 +10,7 @@ import { Dialog } from "@/components/ui/dialog"
 import CS from "@/app/Common/CustomerService/CS"
 
 const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarting, tasksState, setTasksState }) => {
-  const { fetchOptimizationProducts, fetchTasks, getTaskForUser } = useUsersContext()
+  const { fetchOptimizationProducts, fetchTasks, getTaskForUser, setUser } = useUsersContext()
   const [shuffled, setShuffled] = useState([])
   const [showCSModal, setShowCSModal] = useState(false)
   const [csMessage, setCSMessage] = useState("")
@@ -62,7 +62,7 @@ const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarti
     try {
       const taskNo = tasksState === 0 ? 1 : tasksState + 1
       const taskResult = await getTaskForUser(user._id, taskNo)
-      console.log(taskResult)
+      setUser(taskResult.user)
 
       setTask(taskResult)
       setShowTaskSubmissionDialog(true)

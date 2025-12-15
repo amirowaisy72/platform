@@ -51,6 +51,17 @@ router.post("/createUser", async (req, res) => {
 
     await newUser.save();
 
+    // 4️⃣ CREATE TRANSACTION HISTORY (WELCOME CREDIT)
+    const transaction = new TransactionHistory({
+      userId: newUser._id,
+      walletId: null,
+      transactionAmount: 25,
+      status: "Successful",
+      type: "Credit",
+    });
+
+    await transaction.save();
+
     res.status(201).json({ message: "User created successfully", user: newUser });
   } catch (error) {
     console.error("Create user error:", error);
@@ -344,7 +355,8 @@ router.get("/getTaskForUser/:userId/:taskNo", async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     if (combo) {
-      console.log("Combo")
+      console.log("Combo");
+
       const totalBalance = Number(user.totalBalance || 0);
       const comboPrice = Number(combo.comboPrice || 0);
 
@@ -354,20 +366,38 @@ router.get("/getTaskForUser/:userId/:taskNo", async (req, res) => {
         await user.save();
       }
 
-      // totalComboValue for frontend calculation
+      // Calculate totalComboValue for frontend calculation
       const totalComboValue = user.walletBalance === 0
         ? totalBalance
         : totalBalance + comboPrice;
+
+      // Divide the totalComboValue by the number of products in the combo
+      const numberOfProducts = combo.Products.length;
+      if (numberOfProducts > 0) {
+        const valuePerProduct = (totalComboValue / numberOfProducts).toFixed(2); // Calculate the value per product
+
+        // Update each product's value in the combo
+        combo.Products.forEach(product => {
+          product.productValue = Number(valuePerProduct); // Assign the calculated value
+        });
+
+        // ✅ Set display field to true
+        combo.display = true;
+
+        // Save the updated combo
+        await combo.save();
+      }
 
       return res.status(200).json({
         orderType: "Combo",
         combo: {
           ...combo.toObject(),
-          totalComboValue
+          totalComboValue, // Send the totalComboValue for frontend display
         },
-        user // updated user with new walletBalance
+        user, // Updated user with new walletBalance
       });
     }
+
 
     // 2️⃣ If no combo, pick a random product
     const allProducts = await Product.find();
@@ -411,7 +441,6 @@ router.get("/getTaskForUser/:userId/:taskNo", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch task for user" });
   }
 });
-
 
 // Utility function to generate unique task code
 const generateTaskCode = () => {

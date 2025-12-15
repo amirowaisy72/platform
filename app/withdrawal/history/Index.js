@@ -8,7 +8,7 @@ import * as LucideIcons from "lucide-react"
 import { useUsersContext } from "@/app/AllContext/UsersContext"
 import TransactionReceiptModal from "./transaction-receipt-modal"
 
-const Index = () => {
+const Index = ({ page }) => {
   const { getUserTransactionsAPI, user } = useUsersContext()
   const [transactions, setTransactions] = useState([])
   const [rawTransactions, setRawTransactions] = useState([])
@@ -105,6 +105,12 @@ const Index = () => {
       </Card>
     )
 
+    const filteredTransactions = transactions.filter(txn => {
+      if (page === "Deposit") return txn.method === "Deposit";
+      if (page === "Withdrawal") return txn.method === "Withdraw";
+      return true; // fallback
+    });
+
   return (
     <Tabs defaultValue="history" className="mt-0">
       <TabsContent value="history" className="mt-0">
@@ -116,7 +122,7 @@ const Index = () => {
             <h2 className="text-lg sm:text-2xl font-bold text-white">Transaction History</h2>
           </div>
 
-          {transactions.length > 0 ? (
+          {filteredTransactions.length > 0 ? (
             <div className="overflow-x-auto -mx-2 sm:mx-0">
               <div className="inline-block min-w-full align-middle">
                 <Table className="min-w-full">
@@ -136,7 +142,7 @@ const Index = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {transactions.map((item) => (
+                    {filteredTransactions.map((item) => (
                       <TableRow
                         key={item.id}
                         className="border-b border-[#3a4d3c] hover:bg-[#3a4d3c] transition-all duration-200"

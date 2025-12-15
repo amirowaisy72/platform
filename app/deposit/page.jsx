@@ -8,7 +8,7 @@ import Bottom from "@/app/Common/Bottom/Bottom"
 import CS from "@/app/Common/CustomerService/CS"
 import { useRouter } from "next/navigation"
 import Deposit from "./deposit/Index"
-import TransactionHistory from "./history/Index"
+import TransactionHistory from "@/app/withdrawal/history/Index"
 
 export default function DepositPage() {
   const [isCSOpen, setIsCSOpen] = useState(false)
@@ -81,7 +81,7 @@ export default function DepositPage() {
               <Deposit />
             </TabsContent>
             <TabsContent value="history">
-              <TransactionHistory />
+              <TransactionHistory page="Deposit" />
             </TabsContent>
           </Tabs>
 

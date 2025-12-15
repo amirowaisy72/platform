@@ -34,7 +34,7 @@ export default function StartingPage() {
 
     const parsed = JSON.parse(stored)
     setUserDetails(parsed)
-    setWalletBalance(parsed.walletBalance || 0)
+    setWalletBalance(user?.walletBalance || 0)
     setProfilePhotoLink(parsed.profile?.photoLink || "")
   }, [router])
 
@@ -52,9 +52,9 @@ export default function StartingPage() {
     vipLevel: `VIP${userDetails.currentVIPLevel.number} - ${userDetails.currentVIPLevel.name}`,
     totalBalance: walletBalance.toFixed(2),
     walletBalance: walletBalance.toFixed(2),
-    frozenBalance: "0.00",
+    frozenBalance: user?.frozenBalance || 0,
     todayProfit: todayProfit.toFixed(2),
-    salary: "0.00",
+    salary: user?.salary || "0.00",
   }
 
   const notifications = [
@@ -86,8 +86,8 @@ export default function StartingPage() {
   }
 
   const frozenBalance =
-    userDetails.walletBalance <= 0
-      ? Math.abs(userDetails.totalBalance || 0) + Math.abs(userDetails.walletBalance || 0)
+    user?.walletBalance <= 0
+      ? Math.abs(user?.totalBalance || 0) + Math.abs(user?.walletBalance || 0)
       : 0
 
   if (!user) return null
@@ -260,7 +260,7 @@ export default function StartingPage() {
                     </div>
                     <span className="text-sm font-medium text-gray-400">Salary</span>
                   </div>
-                  <p className="text-2xl font-bold text-[#a3d65c]">${userinfo.salary}</p>
+                  <p className="text-2xl font-bold text-[#a3d65c]">${user.salary}</p>
                 </div>
               </div>
             </div>

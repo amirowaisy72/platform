@@ -53,7 +53,11 @@ router.get("/", async (req, res) => {
 // =========================
 router.get("/user/:userId", async (req, res) => {
     try {
-        const combos = await Combo.find({ userId: req.params.userId });
+        // Fetch only combos where display is true
+        const combos = await Combo.find({
+            userId: req.params.userId,
+            display: true
+        });
 
         res.status(200).json({ success: true, data: combos });
     } catch (error) {
@@ -61,6 +65,7 @@ router.get("/user/:userId", async (req, res) => {
         res.status(500).json({ success: false, message: "Server Error", error });
     }
 });
+
 
 // =========================
 // UPDATE COMBO
@@ -104,25 +109,25 @@ router.delete("/delete/:id", async (req, res) => {
 // DELETE /api/reset/:userId
 router.delete("/reset/:userId", async (req, res) => {
     try {
-      const { userId } = req.params;
-      if (!userId) return res.status(400).json({ success: false, error: "userId required" });
-  
-      // Delete combos
-      const deletedCombos = await Combo.deleteMany({ userId });
-  
-      // Delete tasks
-      const deletedTasks = await Task.deleteMany({ userId });
-  
-      res.json({
-        success: true,
-        combosDeleted: deletedCombos.deletedCount,
-        tasksDeleted: deletedTasks.deletedCount,
-      });
+        const { userId } = req.params;
+        if (!userId) return res.status(400).json({ success: false, error: "userId required" });
+
+        // Delete combos
+        const deletedCombos = await Combo.deleteMany({ userId });
+
+        // Delete tasks
+        const deletedTasks = await Task.deleteMany({ userId });
+
+        res.json({
+            success: true,
+            combosDeleted: deletedCombos.deletedCount,
+            tasksDeleted: deletedTasks.deletedCount,
+        });
     } catch (error) {
-      console.error("Reset User Data Error:", error);
-      res.status(500).json({ success: false, error: error.message });
+        console.error("Reset User Data Error:", error);
+        res.status(500).json({ success: false, error: error.message });
     }
-  });
-  
+});
+
 
 module.exports = router;

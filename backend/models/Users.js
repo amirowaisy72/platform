@@ -32,6 +32,7 @@ const leadSchema = new mongoose.Schema(
     commissionTotal: { type: Number, default: 0 },
     todayProfit: { type: Number, default: 0 },
     salary: { type: Number, default: 0 },
+    creditScore: { type: Number, default: 100 },
 
     notifications: [
       {
