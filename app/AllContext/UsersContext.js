@@ -402,7 +402,7 @@ export function UsersProvider({ children }) {
 
   const getCombos = async (userId) => {
     try {
-      const response = await fetch(`${host}api/combo/user/${userId}`);
+      const response = await fetch(`${host}api/combo/user/${userId}/user`);
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.message || "Failed to fetch combos");

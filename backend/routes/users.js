@@ -345,7 +345,11 @@ router.get("/fetchTasks/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const tasks = await Task.find({ userId }).sort({ createdAt: -1 });
+    const tasks = await Task.find({
+      userId,
+      status: "completed"
+    }).sort({ createdAt: -1 });
+
 
     res.status(200).json({
       message: `Tasks fetched successfully for user ${userId}`,
@@ -400,7 +404,7 @@ router.get("/getTaskForUser/:userId/:taskNo", async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     if (combo) {
-      console.log("Combo");
+      console.log(taskNo) //2
 
       const totalBalance = Number(user.totalBalance || 0);
       const comboPrice = Number(combo.comboPrice || 0);
@@ -442,7 +446,6 @@ router.get("/getTaskForUser/:userId/:taskNo", async (req, res) => {
         user, // Updated user with new walletBalance
       });
     }
-
 
     // 2️⃣ If no combo, pick a random product
     const allProducts = await Product.find();
@@ -495,7 +498,7 @@ const generateTaskCode = () => {
   ).join("");
 };
 
-// ✅ Save Task endpoint
+// ✅ Save Task endpoint 
 router.post("/saveTask", async (req, res) => {
   try {
     const { userId, orderType, combo, product, commission } = req.body;
@@ -514,9 +517,11 @@ router.post("/saveTask", async (req, res) => {
     // Prepare new task data
     const newTaskData = {
       userId,
-      orderType,
-      status: "completed",
+      orderType
     };
+
+    let nextCombo = false; // ✅ flag for frontend
+    let nextComboData = null; // ✅ NEW
 
     // 2️⃣ Combo / Normal handling
     if (orderType === "Combo") {
@@ -535,6 +540,30 @@ router.post("/saveTask", async (req, res) => {
         (sum, p) => sum + (p.productValue || 0),
         0
       );
+
+      // 🔍 CHECK NEXT COMBO WITH SAME comboAt
+      if (combo.comboAt) {
+        const nextPendingCombo = await Combo.findOne({
+          userId,
+          comboAt: combo.comboAt,
+          status: "pending",
+          createdAt: { $gt: combo.createdAt } // ✅ ONLY NEXT, not previous
+        }).sort({ createdAt: 1 });
+
+        if (nextPendingCombo) {
+          nextCombo = true;
+
+          // ✅ prepare full object exactly like frontend expects
+          nextComboData = {
+            orderType: "Combo",
+            combo: {
+              ...nextPendingCombo.toObject(),
+              totalComboValue: nextPendingCombo.totalComboValue
+            },
+            user
+          };
+        }
+      }
 
       // -------------------------------
       // Update user balances properly
@@ -560,6 +589,9 @@ router.post("/saveTask", async (req, res) => {
     } else {
       return res.status(400).json({ error: "Invalid orderType" });
     }
+
+    // Decide task status based on nextCombo
+    newTaskData.status = nextCombo ? "pending" : "completed";
 
     // 3️⃣ Save task
     const savedTask = await Task.create(newTaskData);
@@ -592,6 +624,8 @@ router.post("/saveTask", async (req, res) => {
       message: "Task saved and commission applied successfully",
       task: savedTask,
       user,
+      nextCombo, // ✅ frontend flag
+      ...(nextCombo && nextComboData ? nextComboData : {}) // ✅ magic line
     });
 
   } catch (error) {

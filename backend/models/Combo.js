@@ -16,7 +16,7 @@ const comboSchema = new mongoose.Schema(
         comboPrice: {
             type: Number,
             required: true,
-        },
+        }, 
         commission: { type: Number, default: 9 },
         status: { type: String, default: 'pending' },
         display: { type: Boolean, default: false },

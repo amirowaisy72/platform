@@ -46,17 +46,6 @@ export default function StartingPage() {
     { name: "Support Representative 3", phone: "1234567892" },
   ]
 
-  const userinfo = {
-    profilePic: "/professional-profile-avatar.png",
-    name: userDetails.username,
-    vipLevel: `VIP${userDetails.currentVIPLevel.number} - ${userDetails.currentVIPLevel.name}`,
-    totalBalance: walletBalance.toFixed(2),
-    walletBalance: walletBalance.toFixed(2),
-    frozenBalance: user?.frozenBalance || 0,
-    todayProfit: todayProfit.toFixed(2),
-    salary: user?.salary || "0.00",
-  }
-
   const notifications = [
     "🎉 Important update regarding service changes. Please check your inbox for details.",
     "🚀 NEW EVENT: Coming soon! Stay tuned for more information.",

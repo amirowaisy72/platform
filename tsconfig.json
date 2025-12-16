@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-, "app/starting/Optimization/Submit/Index.js"  ],
+, "app/starting/Optimization/Submit/Index.js", "app/records/page.js"  ],
   "exclude": [
     "node_modules"
   ]

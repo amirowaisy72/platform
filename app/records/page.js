@@ -87,16 +87,15 @@ export default function RecordsPage() {
         })
 
       // ==============================
-      // COMBOS
-      // comboAt = bottom se kitne tasks SKIP
+      // COMBOS - merge consecutive same comboAt
       // ==============================
-      const formattedCombos = combos.map(combo => {
-        const rate = combo.commission || 0; // assume this is in % (e.g., 9 for 9%)
+      let formattedCombos = combos.map(combo => {
+        const rate = combo.commission || 0;
 
         return {
           id: combo._id,
           isCombo: true,
-          comboAt: combo.comboAt, // skip from bottom
+          comboAt: combo.comboAt,
           status: combo.status,
           submittedAt: combo.createdAt,
           comboProducts: combo.Products.map(p => ({
@@ -104,7 +103,8 @@ export default function RecordsPage() {
             productName: p.productName,
             productImage: p.productImage?.url || "/placeholder.svg",
             value: p.productValue,
-            commission: +((p.productValue * rate) / 100).toFixed(2), // ✅ percentage-based commission
+            commission: +((p.productValue * rate) / 100).toFixed(2),
+            status: combo.status, // ✅ product carries its own status
           })),
           totalValue: combo.comboPrice,
           totalCommission: combo.Products.reduce(
@@ -113,6 +113,26 @@ export default function RecordsPage() {
           ),
         };
       });
+
+      // ✅ Merge consecutive combos with same comboAt
+      formattedCombos.sort((a, b) => a.comboAt - b.comboAt);
+      const mergedComboGroups = [];
+
+      formattedCombos.forEach(combo => {
+        const lastGroup = mergedComboGroups[mergedComboGroups.length - 1];
+
+        if (lastGroup && lastGroup.comboAt === combo.comboAt) {
+          // Merge products and sums into last group
+          lastGroup.comboProducts.push(...combo.comboProducts);
+          lastGroup.totalValue += combo.totalValue;
+          lastGroup.totalCommission += combo.totalCommission;
+        } else {
+          // New group for different comboAt
+          mergedComboGroups.push({ ...combo });
+        }
+      });
+
+      formattedCombos = mergedComboGroups; // Use this merged array for later
 
 
       // ==============================
@@ -132,7 +152,6 @@ export default function RecordsPage() {
     loadTasks()
   }, [user, fetchTasks, getCombos])
 
-
   // ==============================
   // FILTERING
   // ==============================
@@ -143,7 +162,10 @@ export default function RecordsPage() {
           p.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           p.taskCode.toLowerCase().includes(searchTerm.toLowerCase())
       )
-      const matchesStatus = filterStatus === "all" || record.status === filterStatus
+      const matchesStatus =
+        filterStatus === "all" ||
+        record.comboProducts.some(p => p.status === filterStatus)
+
       return matchesSearch && matchesStatus
     } else {
       const matchesSearch =
@@ -154,18 +176,32 @@ export default function RecordsPage() {
     }
   })
 
-  const completedTasks = taskRecords.filter((r) => !r.isCombo && r.status === "completed").length
+  const completedTasks = taskRecords.reduce((count, r) => {
+    if (r.isCombo) {
+      return count + r.comboProducts.filter(p => p.status === "completed").length
+    }
+    return count + (r.status === "completed" ? 1 : 0)
+  }, 0)
+
   const processingTasks = taskRecords.filter((r) => r.status === "processing").length
   const failedTasks = taskRecords.filter((r) => r.status === "failed").length
-  const totalEarnings = taskRecords
-    .filter((r) => r.status === "completed")
-    .reduce((sum, r) => {
-      // Handle both regular tasks and combo tasks for earnings
-      if (r.isCombo) {
-        return sum + r.totalCommission
-      }
-      return sum + r.commission
-    }, 0)
+  const totalEarnings = taskRecords.reduce((sum, r) => {
+
+    // ✅ REGULAR TASK
+    if (!r.isCombo) {
+      return r.status === "completed"
+        ? sum + r.commission
+        : sum
+    }
+
+    // ✅ COMBO TASK → only completed products
+    const completedComboCommission = r.comboProducts
+      .filter(p => p.status === "completed")
+      .reduce((cSum, p) => cSum + p.commission, 0)
+
+    return sum + completedComboCommission
+
+  }, 0)
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -391,7 +427,7 @@ export default function RecordsPage() {
                               <p className="text-sm text-gray-400">{record.comboProducts.length} Products</p>
                             </div>
                           </div>
-                          {getStatusBadge(record.status)}
+                          {/* {getStatusBadge(record.status)} */}
                         </div>
 
                         {/* Combo Products Grid */}
@@ -411,7 +447,13 @@ export default function RecordsPage() {
                                 />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h4 className="text-sm font-semibold text-white truncate">{product.productName}</h4>
+                                <div className="flex items-center justify-between">
+                                  <h4 className="text-sm font-semibold text-white truncate">
+                                    {product.productName}
+                                  </h4>
+                                  {getStatusBadge(product.status)} {/* ✅ REAL STATUS */}
+                                </div>
+
                                 <div className="flex flex-wrap gap-3 text-xs text-gray-400 mt-1">
                                   <span>
                                     Code: <span className="text-[#a3d65c] font-mono">{product.taskCode}</span>

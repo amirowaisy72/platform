@@ -1,3 +1,5 @@
+
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -25,9 +27,8 @@ const ConfettiParticles = ({ isVisible }) => {
           }}
         >
           <div
-            className={`w-2 h-2 rounded-full ${
-              ["bg-[#a3d65c]", "bg-[#b8e986]", "bg-[#8bc34a]", "bg-[#9ccc65]", "bg-[#aed581]"][i % 5]
-            }`}
+            className={`w-2 h-2 rounded-full ${["bg-[#a3d65c]", "bg-[#b8e986]", "bg-[#8bc34a]", "bg-[#9ccc65]", "bg-[#aed581]"][i % 5]
+              }`}
             style={{
               boxShadow: `0 0 ${3 + Math.random() * 3}px currentColor`,
             }}
@@ -47,7 +48,7 @@ const ConfettiParticles = ({ isVisible }) => {
   )
 }
 
-const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmissionDialog, user, setTasksState }) => {
+const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmissionDialog, user, setTasksState, setTask }) => {
   const { saveTask, setUser } = useUsersContext()
   const [infoMessage, setInfoMessage] = useState("")
   const [productsWithValue, setProductsWithValue] = useState([])
@@ -87,7 +88,6 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
     setSubmitting(true)
 
     if (user.walletBalance < 0) {
-      console.log("Wallet balance : ", user.walletBalance)
       setShowCSDialog(true)
       setSubmitting(false)
       return
@@ -103,14 +103,35 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
       })
 
       if (result) {
+
+        // ==============================
+        // CASE 1️⃣ : NEXT COMBO EXISTS
+        // ==============================
+        if (result.nextCombo && result.orderType === "Combo" && result.combo) {
+
+          // 🔁 Replace current task with next combo data
+          setTask(result)
+
+          // 🔁 Update user
+          setUser(result.user)
+
+          setSubmitting(false)
+
+          return // ⛔ stop here, don't run below logic
+        }
+
+        // ==============================
+        // CASE 2️⃣ : NO NEXT COMBO (FINAL)
+        // ==============================
         setShowTaskSubmissionDialog(false)
         setShowConfetti(false)
         setInfoMessage("")
-        setTasksState((prevState) => prevState + 1)
         setUser(result.user)
+
+        setTasksState((prevState) => prevState + 1)
       }
+
     } catch (err) {
-      console.error("handleSubmitTask error:", err)
       setInfoMessage("Failed to submit task. Please try again.")
     }
     setSubmitting(false)
@@ -123,16 +144,17 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
     return name.length > maxLength ? name.slice(0, maxLength) + "..." : name
   }
 
+  console.log(task)
+
   return (
     <>
       <ConfettiParticles isVisible={showConfetti && isCombo} />
       <Dialog open={showTaskSubmissionDialog} onOpenChange={setShowTaskSubmissionDialog}>
         <DialogContent
-          className={`w-[95vw] sm:max-w-[500px] md:max-w-[600px] lg:max-w-[700px] max-h-[90vh] overflow-y-auto ${
-            isCombo
-              ? "bg-gradient-to-br from-[#2d3e2f] via-[#3d4f3f] to-[#2d3e2f] border-2 border-[#a3d65c] shadow-2xl"
-              : "bg-[#3d4f3f] border border-[#a3d65c]/30"
-          } rounded-3xl`}
+          className={`w-[95vw] sm:max-w-[500px] md:max-w-[600px] lg:max-w-[700px] max-h-[90vh] overflow-y-auto ${isCombo
+            ? "bg-gradient-to-br from-[#2d3e2f] via-[#3d4f3f] to-[#2d3e2f] border-2 border-[#a3d65c] shadow-2xl"
+            : "bg-[#3d4f3f] border border-[#a3d65c]/30"
+            } rounded-3xl`}
         >
           <div className={`pt-4 sm:pt-6 px-4 sm:px-6 text-center ${isCombo ? "animate-pulse" : ""}`}>
             {isCombo && (
@@ -144,9 +166,8 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
             )}
 
             <h2
-              className={`text-2xl sm:text-3xl lg:text-4xl font-black mb-2 tracking-tight ${
-                isCombo ? "text-[#a3d65c]" : "text-white"
-              }`}
+              className={`text-2xl sm:text-3xl lg:text-4xl font-black mb-2 tracking-tight ${isCombo ? "text-[#a3d65c]" : "text-white"
+                }`}
             >
               {isCombo ? "🎁 PREMIUM COMBO!" : "Task Submission"}
             </h2>
@@ -167,8 +188,9 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
                     Total Combo Value
                   </p>
                   <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#2d3e2f] drop-shadow-lg">
-                    -${task.combo.comboPrice.toFixed(2)}
+                    -${(task.combo?.comboPrice ?? 0).toFixed(2)}
                   </h3>
+
                   <div className="flex justify-center gap-2 mt-2 sm:mt-3">
                     <span className="px-2 sm:px-3 py-1 bg-[#2d3e2f]/20 rounded-full text-xs sm:text-sm font-bold text-[#2d3e2f] backdrop-blur">
                       {task.combo?.Products?.length || 0} Products
@@ -184,15 +206,13 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
               {(isCombo ? productsWithValue : [task.product]).map((p, idx) => (
                 <div
                   key={idx}
-                  className={`flex flex-col items-center w-full transform transition-all duration-500 ${
-                    isCombo ? `animate-bounce hover:scale-110` : ""
-                  }`}
+                  className={`flex flex-col items-center w-full transform transition-all duration-500 ${isCombo ? `animate-bounce hover:scale-110` : ""
+                    }`}
                   style={isCombo ? { animationDelay: `${idx * 100}ms` } : {}}
                 >
                   <div
-                    className={`relative overflow-hidden rounded-xl sm:rounded-2xl shadow-xl border-3 ${
-                      isCombo ? "border-[#a3d65c] bg-[#2d3e2f]" : "border-[#a3d65c]/30 bg-[#2d3e2f]"
-                    } w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 hover:shadow-2xl transition-all`}
+                    className={`relative overflow-hidden rounded-xl sm:rounded-2xl shadow-xl border-3 ${isCombo ? "border-[#a3d65c] bg-[#2d3e2f]" : "border-[#a3d65c]/30 bg-[#2d3e2f]"
+                      } w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 hover:shadow-2xl transition-all`}
                   >
                     <Image
                       src={p.productImage?.url || "/placeholder.svg"}
@@ -217,9 +237,8 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
             </div>
 
             <div
-              className={`space-y-3 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 shadow-lg ${
-                isCombo ? "bg-[#2d3e2f] border-[#a3d65c]" : "bg-[#2d3e2f] border-[#a3d65c]/30"
-              }`}
+              className={`space-y-3 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 shadow-lg ${isCombo ? "bg-[#2d3e2f] border-[#a3d65c]" : "bg-[#2d3e2f] border-[#a3d65c]/30"
+                }`}
             >
               <div className="flex justify-between items-center gap-2">
                 <div className="flex items-center gap-2">
@@ -250,11 +269,10 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
             <Button
               onClick={handleSubmitTask}
               disabled={submitting}
-              className={`w-full h-12 sm:h-14 text-base sm:text-lg font-black rounded-xl sm:rounded-2xl shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-75 disabled:cursor-not-allowed ${
-                isCombo
-                  ? "bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] hover:from-[#8bc34a] hover:to-[#a3d65c] text-[#2d3e2f]"
-                  : "bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] hover:from-[#8bc34a] hover:to-[#a3d65c] text-[#2d3e2f]"
-              }`}
+              className={`w-full h-12 sm:h-14 text-base sm:text-lg font-black rounded-xl sm:rounded-2xl shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-75 disabled:cursor-not-allowed ${isCombo
+                ? "bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] hover:from-[#8bc34a] hover:to-[#a3d65c] text-[#2d3e2f]"
+                : "bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] hover:from-[#8bc34a] hover:to-[#a3d65c] text-[#2d3e2f]"
+                }`}
             >
               <LucideIcons.CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
               {submitting ? "Processing..." : isCombo ? "Claim Combo" : "Submit Task"}
