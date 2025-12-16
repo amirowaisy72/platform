@@ -208,6 +208,7 @@ export default function UserTasks({ userId, onClose, userDetails }) {
       totalBalance: 1085,
       commissionTotal: 0,
       todayProfit: 0,
+      transaction: 1085
     }
 
     setLocalUserData(updatedUserData)
@@ -253,6 +254,7 @@ export default function UserTasks({ userId, onClose, userDetails }) {
       ...localUserData,
       walletBalance: 0,
       totalBalance: newTotalBalance,
+      transaction: walletAmount
     }
 
     setLocalUserData(updatedUserData)

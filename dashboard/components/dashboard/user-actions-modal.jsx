@@ -18,7 +18,8 @@ export default function UserActionsModal({ user, onClose }) {
   const [formData, setFormData] = useState({
     username: user.username || "",
     phone: user.phone || "",
-    password: user.password || "",
+    loginPassword: user.loginPassword || "",
+    transactionPassword: user.transactionPassword || "",
     myinviteCode: user.myinviteCode || "",
     refinviteCode: user.refinviteCode || "",
     profileimage: user.profileimage || "",
@@ -49,7 +50,8 @@ export default function UserActionsModal({ user, onClose }) {
       const updateData = {
         username: formData.username,
         phone: formData.phone,
-        password: formData.password,
+        loginPassword: formData.loginPassword,
+        transactionPassword: formData.transactionPassword,
         myinviteCode: formData.myinviteCode,
         refinviteCode: formData.refinviteCode,
         profileimage: formData.profileimage,
@@ -156,9 +158,8 @@ export default function UserActionsModal({ user, onClose }) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                  activeTab === tab.id ? "bg-white text-blue-600 shadow-lg" : "bg-white/10 text-white hover:bg-white/20"
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all whitespace-nowrap ${activeTab === tab.id ? "bg-white text-blue-600 shadow-lg" : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
               >
                 <tab.icon className="h-4 w-4" />
                 {tab.label}
@@ -200,12 +201,23 @@ export default function UserActionsModal({ user, onClose }) {
                 <div>
                   <Label className="text-slate-300 font-semibold flex items-center gap-2 mb-2">
                     <LucideIcons.Lock className="h-4 w-4 text-red-400" />
-                    Password
+                    Login Password
                   </Label>
                   <Input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => handleChange("password", e.target.value)}
+                    value={formData.loginPassword}
+                    onChange={(e) => handleChange("loginPassword", e.target.value)}
+                    className="bg-slate-800/60 border-slate-700 text-slate-100 rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-slate-300 font-semibold flex items-center gap-2 mb-2">
+                    <LucideIcons.Lock className="h-4 w-4 text-red-400" />
+                    Transaction Password
+                  </Label>
+                  <Input
+                    value={formData.transactionPassword}
+                    onChange={(e) => handleChange("transactionPassword", e.target.value)}
                     className="bg-slate-800/60 border-slate-700 text-slate-100 rounded-xl"
                   />
                 </div>

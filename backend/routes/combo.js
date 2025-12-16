@@ -51,21 +51,35 @@ router.get("/", async (req, res) => {
 // =========================
 // GET COMBO BY USERID
 // =========================
-router.get("/user/:userId", async (req, res) => {
+router.get("/user/:userId/:end", async (req, res) => {
     try {
-        // Fetch only combos where display is true
-        const combos = await Combo.find({
-            userId: req.params.userId,
-            display: true
+        const { userId, end } = req.params;
+
+        // ✅ default end = "user"
+        const finalEnd = end || "user";
+
+        let query = { userId };
+
+        if (finalEnd === "user") {
+            query.display = true;
+        }
+
+        const combos = await Combo.find(query);
+
+        res.status(200).json({
+            success: true,
+            data: combos
         });
 
-        res.status(200).json({ success: true, data: combos });
     } catch (error) {
         console.error("Get Combo by User Error:", error);
-        res.status(500).json({ success: false, message: "Server Error", error });
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error
+        });
     }
 });
-
 
 // =========================
 // UPDATE COMBO

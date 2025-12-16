@@ -114,7 +114,7 @@ export function UsersProvider({ children }) {
   // Get combos by User ID
   const getCombosByUser = async (userId) => {
     try {
-      const response = await fetch(`${host}api/combo/user/${userId}`);
+      const response = await fetch(`${host}api/combo/user/${userId}/dashboard`);
       const data = await response.json();
       return data.data || [];
     } catch (error) {

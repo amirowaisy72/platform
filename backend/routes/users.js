@@ -110,16 +110,29 @@ router.get("/users", async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    // Count total users
     const total = await User.countDocuments();
 
-    // Add NumOfTasks for each user
-    const usersWithTaskCount = await Promise.all(
+    const usersWithExtras = await Promise.all(
       users.map(async (user) => {
-        const numOfTasks = await Task.countDocuments({ userId: user._id });
+
+        // ✅ Count tasks
+        const numOfTasks = await Task.countDocuments({
+          userId: user._id
+        });
+
+        // ✅ Find referral user
+        let referralUser = null;
+
+        if (user.refinviteCode) {
+          referralUser = await User.findOne({
+            myinviteCode: user.refinviteCode
+          }).select("username");
+        }
+
         return {
           ...user.toObject(),
           NumOfTasks: numOfTasks,
+          ReferralName: referralUser ? referralUser.username : null
         };
       })
     );
@@ -128,12 +141,14 @@ router.get("/users", async (req, res) => {
       page,
       total,
       totalPages: Math.ceil(total / limit),
-      users: usersWithTaskCount,
+      users: usersWithExtras
     });
 
   } catch (error) {
     console.error("Fetch Users Error:", error);
-    res.status(500).json({ error: "Failed to fetch users" });
+    res.status(500).json({
+      error: "Failed to fetch users"
+    });
   }
 });
 
@@ -158,28 +173,45 @@ router.get("/search", async (req, res) => {
       .limit(pageSize)
       .sort({ createdAt: -1 });
 
-    // Add NumOfTasks for each user
-    const usersWithTaskCount = await Promise.all(
+    const usersWithExtras = await Promise.all(
       users.map(async (user) => {
-        const numOfTasks = await Task.countDocuments({ userId: user._id });
+
+        // ✅ Count tasks
+        const numOfTasks = await Task.countDocuments({
+          userId: user._id
+        });
+
+        // ✅ Find referral name
+        let referralUser = null;
+
+        if (user.refinviteCode) {
+          referralUser = await User.findOne({
+            myinviteCode: user.refinviteCode
+          }).select("username");
+        }
+
         return {
           ...user.toObject(),
           NumOfTasks: numOfTasks,
+          ReferralName: referralUser ? referralUser.username : null
         };
       })
     );
 
     res.json({
-      users: usersWithTaskCount,
+      users: usersWithExtras,
       totalPages: Math.ceil(total / pageSize),
       currentPage: Number(page)
     });
 
   } catch (error) {
     console.error("Search error:", error);
-    res.status(500).json({ error: "Search failed" });
+    res.status(500).json({
+      error: "Search failed"
+    });
   }
 });
+
 
 // ✅ Update User (PUT)
 router.put("/updateUser/:id", async (req, res) => {
@@ -217,6 +249,19 @@ router.put("/updateUser/:id", async (req, res) => {
     });
 
     const updatedUser = await user.save();
+
+    // ✅ Transaction create logic
+    let transactionRecord = null;
+
+    if (updatedData.transaction !== undefined) {
+      transactionRecord = await TransactionHistory.create({
+        userId: userId,
+        walletId: null,
+        transactionAmount: updatedData.transaction,
+        status: "Successful",
+        type: "Credit",
+      });
+    }
 
     res.json({
       message: "User updated successfully",

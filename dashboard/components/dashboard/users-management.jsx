@@ -184,11 +184,13 @@ export default function UsersManagement() {
                 <thead>
                   <tr className="bg-slate-800/60 border-b border-slate-700">
                     <th className="px-6 py-4 text-left text-sm font-bold text-slate-200">Username</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-slate-200">Referal Name</th>
                     <th className="px-6 py-4 text-left text-sm font-bold text-slate-200">Phone</th>
                     <th className="px-6 py-4 text-left text-sm font-bold text-slate-200">VIP Level</th>
                     <th className="px-6 py-4 text-left text-sm font-bold text-slate-200">Tasks</th>
                     <th className="px-6 py-4 text-left text-sm font-bold text-slate-200">Wallet Balance</th>
                     <th className="px-6 py-4 text-left text-sm font-bold text-slate-200">Total Balance</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-slate-200">Salary</th>
                     <th className="px-6 py-4 text-left text-sm font-bold text-slate-200">Commission</th>
                     <th className="px-6 py-4 text-center text-sm font-bold text-slate-200">Actions</th>
                   </tr>
@@ -202,6 +204,7 @@ export default function UsersManagement() {
                         className="border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors"
                       >
                         <td className="px-6 py-4 font-semibold text-slate-200">{user.username}</td>
+                        <td className="px-6 py-4 font-semibold text-slate-200">{user.ReferralName}</td>
                         <td className="px-6 py-4 text-slate-400">{user.phone}</td>
                         <td className="px-6 py-4">
                           <span className="px-3 py-1 bg-purple-900/40 text-purple-300 rounded-full text-sm font-semibold border border-purple-700/50">
@@ -231,6 +234,7 @@ export default function UsersManagement() {
                         </td>
                         <td className="px-6 py-4 font-semibold text-green-400">${user.walletBalance}</td>
                         <td className="px-6 py-4 font-semibold text-blue-400">{user.totalBalance}</td>
+                        <td className="px-6 py-4 font-semibold text-blue-400">{user.salary}</td>
                         <td className="px-6 py-4 font-semibold text-blue-400">${user.commissionTotal}</td>
 
                         <td className="px-6 py-4 text-center flex justify-center gap-2">

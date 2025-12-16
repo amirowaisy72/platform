@@ -12,7 +12,7 @@ import { useUsersContext } from "../AllContext/UsersContext"
 import Bottom from "@/app/Common/Bottom/Bottom"
 
 export default function PersonalInformationPage() {
-  const { user, updateUserAPI } = useUsersContext()
+  const { user, updateUserAPI, logout } = useUsersContext()
 
   const formateDate = (date) => {
     const joinDate = new Date(date).toLocaleString("en-US", {
@@ -97,6 +97,7 @@ export default function PersonalInformationPage() {
       }
 
       showNotification("Login password updated successfully!", "success")
+      logout()
 
       setEditValues({
         ...editValues,
