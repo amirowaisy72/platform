@@ -8,7 +8,7 @@ const Task = require("../models/Task");
 // =========================
 router.post("/create", async (req, res) => {
     try {
-        const { userId, comboAt, comboPrice, Products } = req.body;
+        const { userId, comboAt, comboPrice, commission, Products } = req.body;
 
         if (!userId) {
             return res.status(400).json({ success: false, error: "userId missing" });

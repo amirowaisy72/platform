@@ -32,6 +32,8 @@ export default function UserTasks({ userId, onClose, userDetails }) {
   const [localUserData, setLocalUserData] = useState(null)
   const [updatingUser, setUpdatingUser] = useState(false)
 
+  const [commission, setCommission] = useState("9")
+
   useEffect(() => {
     const currentUser = users.find((u) => u._id === userId)
     if (currentUser) {
@@ -94,6 +96,7 @@ export default function UserTasks({ userId, onClose, userDetails }) {
       userId,
       comboAt: Number(comboAt),
       comboPrice: Number(comboPrice),
+      commission: Number(commission),
       Products: products,
     }
 
@@ -151,14 +154,17 @@ export default function UserTasks({ userId, onClose, userDetails }) {
     setEditingComboId(combo._id)
     setComboAt(combo.comboAt)
     setComboPrice(combo.comboPrice)
+    setCommission(combo.commission ?? "9")
     setProducts(combo.Products)
   }
+
 
   // Reset input fields
   const resetForm = () => {
     setEditingComboId(null)
     setComboAt("")
     setComboPrice("")
+    setCommission("9")
     setProductCount("")
     setProducts([])
   }
@@ -385,6 +391,21 @@ export default function UserTasks({ userId, onClose, userDetails }) {
                       className="bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-purple-500"
                     />
                   </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 text-sm text-slate-300 mb-2">
+                      <LucideIcons.Percent size={16} />
+                      Combo Commission Rate (%)
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Enter commission rate"
+                      value={commission}
+                      onChange={(e) => setCommission(e.target.value)}
+                      className="bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-purple-500"
+                    />
+                  </div>
+
 
                   <div>
                     <label className="flex items-center gap-2 text-sm text-slate-300 mb-2">
