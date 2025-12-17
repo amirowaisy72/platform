@@ -215,7 +215,7 @@ export default function UserTasks({ userId, onClose, userDetails }) {
     setHasUserChanges(true)
 
     // Auto set combo fields
-    setComboAt("2")
+    setComboAt("33")
     setComboPrice(randomComboPrice.toString())
     setProductCount("2")
 
