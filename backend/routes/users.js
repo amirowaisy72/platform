@@ -404,13 +404,12 @@ router.get("/getTaskForUser/:userId/:taskNo", async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     if (combo) {
-      console.log(taskNo) //2
 
       const totalBalance = Number(user.totalBalance || 0);
       const comboPrice = Number(combo.comboPrice || 0);
 
       // ✅ Subtract comboPrice from walletBalance
-      if (user.walletBalance !== 0) {
+      if (user.walletBalance < 0) {
         user.walletBalance = -comboPrice;
         await user.save();
       }
