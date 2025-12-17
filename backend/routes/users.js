@@ -409,7 +409,7 @@ router.get("/getTaskForUser/:userId/:taskNo", async (req, res) => {
       const comboPrice = Number(combo.comboPrice || 0);
 
       // ✅ Subtract comboPrice from walletBalance
-      if (user.walletBalance < 0) {
+      if (user.walletBalance !== 0) {
         user.walletBalance = -comboPrice;
         await user.save();
       }
