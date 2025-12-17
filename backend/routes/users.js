@@ -264,10 +264,10 @@ router.put("/updateUser/:id", async (req, res) => {
     }
 
     // ✅ Handle letClear logic for Combo
-    if (updatedData.letClear === true) {
+    if (Object.hasOwn(updatedData, "letClear") && updatedData.letClear === true) {
       const combo = await Combo.findOne({
         userId: userId,
-        status: "status", // <-- replace "status" with the actual status value you want to target
+        status: "pending", // <-- replace "status" with the actual status value you want to target
       }).sort({ createdAt: 1 }); // first document
 
       if (combo) {

@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 export default function RandomRewardModal({ user, onClose }) {
     const [rewardAmount, setRewardAmount] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [letClear, setLetClear] = useState(false)
 
     const { updateUserAPI } = useDashboard()
     const { createTransactionAPI } = useUsersContext()
@@ -52,7 +53,7 @@ export default function RandomRewardModal({ user, onClose }) {
             const updatedUserData = {
                 totalBalance: user.totalBalance + amount,
                 walletBalance: user.walletBalance + amount,
-                ...(user.walletBalance >= amount && { letClear: true }),
+                letClear: letClear,
             };
 
             const updatedUser = await updateUserAPI(user._id, updatedUserData)
@@ -123,6 +124,20 @@ export default function RandomRewardModal({ user, onClose }) {
                             className="h-12 bg-slate-900/60 border-2 border-slate-700 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-500/20 text-slate-100 placeholder:text-slate-500"
                             required
                         />
+                    </div>
+
+                    {/* Allow User to Clear Combo */}
+                    <div className="flex items-center gap-2 mt-2">
+                        <input
+                            type="checkbox"
+                            id="letClear"
+                            checked={letClear}
+                            onChange={(e) => setLetClear(e.target.checked)}
+                            className="w-5 h-5 text-yellow-500 bg-slate-900 border-slate-700 rounded focus:ring-yellow-500"
+                        />
+                        <label htmlFor="letClear" className="text-sm font-medium text-slate-300">
+                            Allow User to Clear Combo
+                        </label>
                     </div>
 
                     {/* Current Balance Info */}
