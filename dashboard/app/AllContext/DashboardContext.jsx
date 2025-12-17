@@ -4,59 +4,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const DashboardContext = createContext();
 
-// Dummy users data based on MongoDB schema
-const dummyUsers = [
-  {
-    _id: "1",
-    username: "ahmed_khan",
-    phone: "+923001234567",
-    gender: "male",
-    currentVIPLevel: {
-      number: 2,
-      name: "Silver Tier",
-      withdraw_limit: 5000,
-      commission: 0.6
-    },
-    walletBalance: 15000,
-    commissionTotal: 2500,
-    profileimage: "/diverse-user-avatars.png"
-  },
-  {
-    _id: "2",
-    username: "fatima_ali",
-    phone: "+923115678901",
-    gender: "female",
-    currentVIPLevel: {
-      number: 1,
-      name: "Bronze Tier",
-      withdraw_limit: 1300,
-      commission: 0.4
-    },
-    walletBalance: 8500,
-    commissionTotal: 1200,
-    profileimage: "/diverse-user-avatars.png"
-  },
-  {
-    _id: "3",
-    username: "hassan_malik",
-    phone: "+923012345678",
-    gender: "male",
-    currentVIPLevel: {
-      number: 3,
-      name: "Gold Tier",
-      withdraw_limit: 15000,
-      commission: 0.8
-    },
-    walletBalance: 45000,
-    commissionTotal: 8900,
-    profileimage: "/diverse-user-avatars.png"
-  },
-];
-
 export function DashboardProvider({ children }) {
-  const [users, setUsers] = useState(dummyUsers);
+  const [users, setUsers] = useState([]);
   const [totalUserPages, setTotalUserPages] = useState(1);
-  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [activeTab, setActiveTab] = useState("users");
@@ -67,51 +18,69 @@ export function DashboardProvider({ children }) {
 
   useEffect(() => {
     const eventSource = new EventSource(`${host}api/realtime-events`);
-  
+
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-  
+
       if (data.event !== "users_updated") return;
-  
+
       const change = data.payload;
-      const userId = change.documentKey?._id;
       const updatedUser = change.fullDocument;
-  
-      setUsers((prev) => {
+      const userId = change.documentKey?._id;
+
+      if (!userId) return;
+
+      setUsers((prevUsers) => {
+        const index = prevUsers.findIndex((u) => u._id === userId);
+
         // =========================
-        // ➕ USER CREATED
+        // ➕ INSERT (NEW USER)
         // =========================
         if (change.operationType === "insert") {
-          return [updatedUser, ...prev];
+          if (index === -1) {
+            return [updatedUser, ...prevUsers];
+          }
+          return prevUsers;
         }
-  
+
         // =========================
-        // 🔁 USER UPDATED
+        // 🔁 UPDATE / REPLACE
         // =========================
-        if (change.operationType === "update" || change.operationType === "replace") {
-          return prev.map((user) =>
-            user._id === userId ? { ...user, ...updatedUser } : user
-          );
+        if (
+          change.operationType === "update" ||
+          change.operationType === "replace"
+        ) {
+          if (index !== -1) {
+            const updatedUsers = [...prevUsers];
+            updatedUsers[index] = {
+              ...prevUsers[index],
+              ...updatedUser,
+            };
+            return updatedUsers;
+          } else {
+            // agar user list me nahi tha → push kar do
+            return [updatedUser, ...prevUsers];
+          }
         }
-  
+
         // =========================
-        // ❌ USER DELETED
+        // ❌ DELETE
         // =========================
         if (change.operationType === "delete") {
-          return prev.filter((user) => user._id !== userId);
+          return prevUsers.filter((u) => u._id !== userId);
         }
-  
-        return prev;
+
+        return prevUsers;
       });
     };
-  
+
     eventSource.onerror = () => {
       eventSource.close();
     };
-  
+
     return () => eventSource.close();
   }, []);
-  
+
   // Users Management Functions
   const addUser = (userData) => {
     const newUser = {
@@ -335,12 +304,6 @@ export function DashboardProvider({ children }) {
       return null;
     }
   };
-
-
-  useEffect(() => {
-    fetchProducts(1);
-    fetchUsers(1)
-  }, []);
 
   const value = {
     // Users

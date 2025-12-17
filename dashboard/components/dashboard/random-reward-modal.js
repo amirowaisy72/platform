@@ -88,7 +88,7 @@ export default function RandomRewardModal({ user, onClose }) {
                         <div className="h-10 w-10 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
                             <Gift className="h-5 w-5 text-white" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-100">Random Reward</h2>
+                        <h2 className="text-2xl font-bold text-slate-100">Deposit balance</h2>
                     </div>
                     <Button
                         variant="ghost"
@@ -104,14 +104,14 @@ export default function RandomRewardModal({ user, onClose }) {
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     {/* User Info */}
                     <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-700">
-                        <p className="text-sm text-slate-400 mb-1">Rewarding User</p>
+                        <p className="text-sm text-slate-400 mb-1">Adding balance to user</p>
                         <p className="text-xl font-bold text-slate-100">{user.username}</p>
                         <p className="text-sm text-slate-500 mt-1">Phone: {user.phone}</p>
                     </div>
 
                     {/* Reward Amount Input */}
                     <div className="space-y-2">
-                        <label className="text-sm font-semibold text-slate-300">Reward Amount ($)</label>
+                        <label className="text-sm font-semibold text-slate-300">Amount ($)</label>
                         <Input
                             type="number"
                             step="0.01"
@@ -160,7 +160,7 @@ export default function RandomRewardModal({ user, onClose }) {
                             ) : (
                                 <>
                                     <Gift className="h-4 w-4 mr-2" />
-                                    Give Reward
+                                    Add Balance
                                 </>
                             )}
                         </Button>

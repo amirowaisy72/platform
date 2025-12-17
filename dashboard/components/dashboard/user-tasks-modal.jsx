@@ -208,7 +208,7 @@ export default function UserTasks({ userId, onClose, userDetails }) {
       totalBalance: 1085,
       commissionTotal: 0,
       todayProfit: 0,
-      transaction: 1085
+      transaction: 1060
     }
 
     setLocalUserData(updatedUserData)
@@ -238,32 +238,6 @@ export default function UserTasks({ userId, onClose, userDetails }) {
     } finally {
       setLoadingProducts(false)
     }
-  }
-
-  const handleClearCombo = () => {
-    if (!localUserData) return
-
-    // Get wallet balance (convert negative to positive if needed)
-    const walletAmount = Math.abs(localUserData.walletBalance)
-
-    // Add to total balance
-    const newTotalBalance = localUserData.totalBalance + walletAmount
-
-    // Update local user data
-    const updatedUserData = {
-      ...localUserData,
-      walletBalance: 0,
-      totalBalance: newTotalBalance,
-      transaction: walletAmount
-    }
-
-    setLocalUserData(updatedUserData)
-    setHasUserChanges(true)
-
-    toast({
-      title: "Combo Cleared",
-      description: `$${walletAmount.toFixed(2)} moved to total balance. Click 'Update User' to save.`,
-    })
   }
 
   const handleUpdateUser = async () => {
@@ -327,14 +301,6 @@ export default function UserTasks({ userId, onClose, userDetails }) {
               >
                 <LucideIcons.Zap size={18} />
                 Recharge Training
-              </Button>
-
-              <Button
-                onClick={handleClearCombo}
-                className="bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 flex items-center gap-2"
-              >
-                <LucideIcons.Eraser size={18} />
-                Clear Combo
               </Button>
 
               {hasUserChanges && (
