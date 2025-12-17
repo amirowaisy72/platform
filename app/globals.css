@@ -358,3 +358,63 @@ html {
 .shadow-glow-purple {
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
 }
+
+/* ===== react-international-phone DARK THEME FIX ===== */
+
+.react-international-phone-input-container {
+  width: 100%;
+}
+
+.react-international-phone-country-selector-button {
+  background-color: rgba(45, 62, 47, 0.8) !important;
+  border: 2px solid rgba(163, 214, 92, 0.3) !important;
+  color: white !important;
+}
+
+.react-international-phone-input {
+  background-color: rgba(45, 62, 47, 0.8) !important;
+  color: white !important;
+  border: 2px solid rgba(163, 214, 92, 0.3) !important;
+}
+
+.react-international-phone-input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* focus state */
+.react-international-phone-input:focus {
+  border-color: #a3d65c !important;
+  box-shadow: 0 0 0 4px rgba(163, 214, 92, 0.2) !important;
+}
+
+/* remove inner white bg */
+.react-international-phone-input-container * {
+  background-image: none !important;
+}
+
+/* ===== react-international-phone HEIGHT FIX ===== */
+
+.react-international-phone-input-container {
+  min-height: 50px !important;
+}
+
+.react-international-phone-country-selector-button {
+  height: 50px !important;
+}
+
+.react-international-phone-input {
+  height: 50px !important;
+  line-height: 50px !important;
+}
+
+.react-international-phone-input {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 0.75rem !important;   /* rounded-2xl */
+  border-bottom-right-radius: 0.75rem !important;
+}
+
+.react-international-phone-country-selector-button {
+  border-top-left-radius: 0.75rem !important;
+  border-bottom-left-radius: 0.75rem !important;
+}

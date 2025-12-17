@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import * as LucideIcons from "lucide-react"
 import { useUsersContext } from "../AllContext/UsersContext"
+import { PhoneInput } from "react-international-phone"
+import "react-international-phone/style.css"
 
 export default function SignupPage() {
   const { submitNewUser } = useUsersContext()
@@ -44,6 +46,22 @@ export default function SignupPage() {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
+      }))
+    }
+    if (serverError) {
+      setServerError("")
+    }
+  }
+
+  const handlePhoneChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      phone: value,
+    }))
+    if (errors.phone) {
+      setErrors((prev) => ({
+        ...prev,
+        phone: "",
       }))
     }
     if (serverError) {
@@ -96,7 +114,7 @@ export default function SignupPage() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required"
-    } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
+    } else if (formData.phone.length < 8) {
       newErrors.phone = "Please enter a valid phone number"
     }
 
@@ -204,11 +222,10 @@ export default function SignupPage() {
                     placeholder="Choose a username"
                     value={formData.username}
                     onChange={handleInputChange}
-                    className={`pl-12 h-12 text-base bg-[#2d3e2f]/80 border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white placeholder:text-white/40 ${
-                      errors.username
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-[#a3d65c]/30 focus:border-[#a3d65c]"
-                    }`}
+                    className={`pl-12 h-12 text-base bg-[#2d3e2f]/80 border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white placeholder:text-white/40 ${errors.username
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-[#a3d65c]/30 focus:border-[#a3d65c]"
+                      }`}
                     required
                   />
                 </div>
@@ -220,27 +237,33 @@ export default function SignupPage() {
                   <LucideIcons.Phone className="h-4 w-4" />
                   Phone Number *
                 </Label>
+
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                    <LucideIcons.Phone className="h-5 w-5 text-white/40" />
-                  </div>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+1234567890"
+                  <PhoneInput
+                    defaultCountry="us"
                     value={formData.phone}
-                    onChange={handleInputChange}
-                    className={`pl-12 h-12 text-base bg-[#2d3e2f]/80 border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white placeholder:text-white/40 ${
-                      errors.phone
+                    onChange={handlePhoneChange}
+                    className="w-full"
+                    inputClassName={`h-14 w-full pl-12 pr-4 text-base bg-[#2d3e2f]/80 border-2 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:ring-4 focus:ring-[#a3d65c]/20 transition-all ${errors.phone
                         ? "border-red-500 focus:border-red-500"
                         : "border-[#a3d65c]/30 focus:border-[#a3d65c]"
-                    }`}
-                    required
+                      }`}
+                    countrySelectorStyleProps={{
+                      buttonClassName:
+                        "h-14 px-3 bg-[#2d3e2f]/80 border-2 border-r-0 border-[#a3d65c]/30 rounded-l-xl text-white hover:bg-[#3a4d3c]",
+                    }}
+                    inputProps={{
+                      id: "phone",
+                      placeholder: "Enter phone number",
+                      required: true,
+                    }}
                   />
                 </div>
+
                 {errors.phone && <p className="text-red-400 text-sm">{errors.phone}</p>}
+                <p className="text-xs text-white/60">Your phone number with country code</p>
               </div>
+
 
               <div className="space-y-2">
                 <Label htmlFor="transactionPassword" className="text-white font-semibold flex items-center gap-2">
@@ -258,11 +281,10 @@ export default function SignupPage() {
                     placeholder="Create transaction password"
                     value={formData.transactionPassword}
                     onChange={handleInputChange}
-                    className={`pl-12 pr-12 h-12 text-base bg-[#2d3e2f]/80 border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white placeholder:text-white/40 ${
-                      errors.transactionPassword
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-[#a3d65c]/30 focus:border-[#a3d65c]"
-                    }`}
+                    className={`pl-12 pr-12 h-12 text-base bg-[#2d3e2f]/80 border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white placeholder:text-white/40 ${errors.transactionPassword
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-[#a3d65c]/30 focus:border-[#a3d65c]"
+                      }`}
                     required
                   />
                   <Button
@@ -299,11 +321,10 @@ export default function SignupPage() {
                     placeholder="Create login password"
                     value={formData.loginPassword}
                     onChange={handleInputChange}
-                    className={`pl-12 pr-12 h-12 text-base bg-[#2d3e2f]/80 border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white placeholder:text-white/40 ${
-                      errors.loginPassword
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-[#a3d65c]/30 focus:border-[#a3d65c]"
-                    }`}
+                    className={`pl-12 pr-12 h-12 text-base bg-[#2d3e2f]/80 border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white placeholder:text-white/40 ${errors.loginPassword
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-[#a3d65c]/30 focus:border-[#a3d65c]"
+                      }`}
                     required
                   />
                   <Button
@@ -339,11 +360,10 @@ export default function SignupPage() {
                     placeholder="Confirm your login password"
                     value={formData.confirmLoginPassword}
                     onChange={handleInputChange}
-                    className={`pl-12 pr-12 h-12 text-base bg-[#2d3e2f]/80 border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white placeholder:text-white/40 ${
-                      errors.confirmLoginPassword
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-[#a3d65c]/30 focus:border-[#a3d65c]"
-                    }`}
+                    className={`pl-12 pr-12 h-12 text-base bg-[#2d3e2f]/80 border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white placeholder:text-white/40 ${errors.confirmLoginPassword
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-[#a3d65c]/30 focus:border-[#a3d65c]"
+                      }`}
                     required
                   />
                   <Button
@@ -370,9 +390,8 @@ export default function SignupPage() {
                 </Label>
                 <Select onValueChange={(value) => handleSelectChange("gender", value)}>
                   <SelectTrigger
-                    className={`h-12 text-base bg-[#2d3e2f] border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white ${
-                      errors.gender ? "border-red-500" : "border-[#a3d65c]/30"
-                    }`}
+                    className={`h-12 text-base bg-[#2d3e2f] border-2 rounded-xl focus:ring-4 focus:ring-[#a3d65c]/20 transition-all text-white ${errors.gender ? "border-red-500" : "border-[#a3d65c]/30"
+                      }`}
                   >
                     <SelectValue placeholder="Select your gender" />
                   </SelectTrigger>
