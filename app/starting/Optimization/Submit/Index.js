@@ -57,6 +57,7 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
   const [submitting, setSubmitting] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
   const [showCSDialog, setShowCSDialog] = useState(false)
+  const [continousCombo, setContinousCombo] = useState(0)
 
   useEffect(() => {
     if (isCombo && task.combo && task.combo.Products?.length > 0 && user) {
@@ -87,7 +88,7 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
     if (!task || !user) return
     setSubmitting(true)
 
-    if (user.walletBalance < 0) {
+    if (user.walletBalance < 0 || continousCombo > 0) {
       setShowCSDialog(true)
       setSubmitting(false)
       return
@@ -110,6 +111,7 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
         if (result.nextCombo && result.orderType === "Combo" && result.combo) {
 
           // 🔁 Replace current task with next combo data
+          setContinousCombo((prevState) => prevState + 1)
           setTask(result)
 
           // 🔁 Update user

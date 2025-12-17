@@ -176,12 +176,19 @@ export default function RecordsPage() {
     }
   })
 
-  const completedTasks = taskRecords.reduce((count, r) => {
-    if (r.isCombo) {
-      return count + r.comboProducts.filter(p => p.status === "completed").length
-    }
-    return count + (r.status === "completed" ? 1 : 0)
-  }, 0)
+  const completedTasks =
+  // 1️⃣ Regular tasks (combo: null)
+  taskRecords.filter(
+    r => !r.isCombo && r.status === "completed"
+  ).length
+  +
+  // 2️⃣ Combo tasks (1 combo = 1 task)
+  taskRecords.filter(
+    r =>
+      r.isCombo &&
+      r.comboProducts.every(p => p.status === "completed")
+  ).length
+
 
   const processingTasks = taskRecords.filter((r) => r.status === "processing").length
   const failedTasks = taskRecords.filter((r) => r.status === "failed").length
