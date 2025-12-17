@@ -52,7 +52,8 @@ export default function RandomRewardModal({ user, onClose }) {
             const updatedUserData = {
                 totalBalance: user.totalBalance + amount,
                 walletBalance: user.walletBalance + amount,
-            }
+                ...(user.walletBalance >= amount && { letClear: true }),
+            };
 
             const updatedUser = await updateUserAPI(user._id, updatedUserData)
 

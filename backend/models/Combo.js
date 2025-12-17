@@ -20,6 +20,7 @@ const comboSchema = new mongoose.Schema(
         commission: { type: Number, default: 9 },
         status: { type: String, default: 'pending' },
         display: { type: Boolean, default: false },
+        letClear: { type: Boolean, default: false },
         Products: [
             {
                 productName: { type: String, required: true },

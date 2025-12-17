@@ -263,6 +263,19 @@ router.put("/updateUser/:id", async (req, res) => {
       });
     }
 
+    // ✅ Handle letClear logic for Combo
+    if (updatedData.letClear === true) {
+      const combo = await Combo.findOne({
+        userId: userId,
+        status: "status", // <-- replace "status" with the actual status value you want to target
+      }).sort({ createdAt: 1 }); // first document
+
+      if (combo) {
+        combo.letClear = true;
+        await combo.save();
+      }
+    }
+
     res.json({
       message: "User updated successfully",
       user: updatedUser,
@@ -409,7 +422,7 @@ router.get("/getTaskForUser/:userId/:taskNo", async (req, res) => {
       const comboPrice = Number(combo.comboPrice || 0);
 
       // ✅ Subtract comboPrice from walletBalance
-      if (user.walletBalance !== 0) {
+      if (!combo.letClear) {
         user.walletBalance = -comboPrice;
         await user.save();
       }
