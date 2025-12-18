@@ -1,3 +1,4 @@
+import { LiveSupportProvider } from './AllContext/ChatContext';
 import { UsersProvider } from './AllContext/UsersContext';
 import './globals.css'
 
@@ -10,7 +11,7 @@ export default function RootLayout({ children }) {
         <title>My App</title>
       </head>
       <body>
-        <UsersProvider>{children}</UsersProvider>
+        <UsersProvider><LiveSupportProvider>{children}</LiveSupportProvider></UsersProvider>
       </body>
     </html>
   )

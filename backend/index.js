@@ -125,6 +125,7 @@ app.get("/api/realtime-events", async (req, res) => {
 app.use("/api/users", require("./routes/users"));
 app.use("/api/products", require("./routes/products"));
 app.use("/api/combo", require("./routes/combo"));
+app.use("/api/liveSupport", require("./routes/liveSupport"));
 
 // =======================
 // 🚀 START SERVER
