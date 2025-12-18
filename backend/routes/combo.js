@@ -18,6 +18,7 @@ router.post("/create", async (req, res) => {
             userId,
             comboAt,
             comboPrice,
+            commission,
             Products,
         });
 
