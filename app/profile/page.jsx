@@ -27,6 +27,7 @@ export default function ProfilePage() {
     walletAmount: null,
     commission: null,
     joinDate: null,
+    creditScore: null,
   })
 
   useEffect(() => {
@@ -35,7 +36,6 @@ export default function ProfilePage() {
 
     if (userFromStorage) {
       const userData = JSON.parse(userFromStorage)
-      console.log(userData)
 
       const joinDate = new Date(userData.createdAt).toLocaleString("en-US", {
         month: "long",
@@ -50,6 +50,7 @@ export default function ProfilePage() {
         walletAmount: userData.walletBalance,
         commission: userData.commissionTotal,
         joinDate: joinDate,
+        creditScore: userData.creditScore
       })
 
       setProfilePhotoLink(userData.profile?.photoLink || "")
@@ -226,13 +227,23 @@ export default function ProfilePage() {
 
               {/* Credit Score */}
               <div className="w-full mb-8">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-gray-300">Credit Score</span>
-                  <span className="text-sm font-bold text-[#a3d65c]">
-                    {user.creditScore}/100
+                {/* Labels */}
+                <div className="relative mb-2 h-5">
+                  {/* Current Score (moves with bar) */}
+                  <span
+                    className="absolute text-sm font-bold text-[#a3d65c] transition-all duration-500"
+                    style={{ left: `calc(${user.creditScore}% - 20px)` }}
+                  >
+                    {user.creditScore}%
+                  </span>
+
+                  {/* Max Score */}
+                  <span className="absolute right-0 text-sm font-medium text-gray-400">
+                    100%
                   </span>
                 </div>
 
+                {/* Progress Bar */}
                 <div className="h-2 bg-[#2d3e2f] rounded-full overflow-hidden border border-[#a3d65c]/20">
                   <div
                     className="h-full bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] rounded-full transition-all duration-500"
@@ -240,6 +251,7 @@ export default function ProfilePage() {
                   ></div>
                 </div>
               </div>
+
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">
@@ -266,9 +278,9 @@ export default function ProfilePage() {
                     <span className="text-sm font-semibold text-gray-300">Commission</span>
                   </div>
                   <p className="text-4xl font-extrabold text-[#a3d65c] drop-shadow-lg">{new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    }).format(user.commission)}</p>
+                    style: "currency",
+                    currency: "USD",
+                  }).format(user.commission)}</p>
                 </div>
 
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">

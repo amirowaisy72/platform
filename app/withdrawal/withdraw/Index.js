@@ -39,6 +39,14 @@ const Index = () => {
 
         const maxLimit = withdrawalLimits[vipLevel]
 
+        if (user.creditScore < 98) {
+            showToast(
+                `Your credit score is low. You need to improve your credit score first.`,
+                "error"
+            )
+            return
+        }
+
         if (!walletId) {
             showToast("Please select a wallet address.", "error")
             return
@@ -62,6 +70,14 @@ const Index = () => {
             return
         }
 
+        if (user.walletBalance <= 0) {
+            showToast(
+                `Illegal withdrawal attempt.`,
+                "error"
+            )
+            return
+        }
+
         setLoading(true)
 
         try {
@@ -74,13 +90,22 @@ const Index = () => {
             })
 
             if (result.error) {
-                setError(result.error)
+                showToast(
+                    result.error,
+                    "error"
+                )
             } else {
-                setSuccess("Withdrawal request submitted successfully!")
+                showToast(
+                    `Withdrawal request submitted successfully!`,
+                    "success"
+                )
                 setTransactionPassword("")
             }
         } catch (err) {
-            setError("Something went wrong. Please try again.")
+            showToast(
+                `Something went wrong. Please try again.`,
+                "error"
+            )
         } finally {
             setLoading(false)
         }
