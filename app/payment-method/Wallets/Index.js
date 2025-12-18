@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label"
 const Index = ({ page = null, setWalletId, walletId }) => {
   const { user, getWalletAddressesAPI, updateWalletAddressAPI, deleteWalletAddressAPI, createWalletAddressAPI } =
     useUsersContext()
-
   const [walletAddresses, setWalletAddresses] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")

@@ -236,7 +236,7 @@ export default function ProfilePage() {
                 <div className="h-2 bg-[#2d3e2f] rounded-full overflow-hidden border border-[#a3d65c]/20">
                   <div
                     className="h-full bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] rounded-full transition-all duration-500"
-                    style={{ width: `${user.creditScore}%` }}   
+                    style={{ width: `${user.creditScore}%` }}
                   ></div>
                 </div>
               </div>
@@ -250,8 +250,12 @@ export default function ProfilePage() {
                     <span className="text-sm font-semibold text-gray-300">Wallet Balance</span>
                   </div>
                   <p className="text-4xl font-extrabold text-[#a3d65c] drop-shadow-lg">
-                    ${user.walletAmount.toFixed(2)}
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    }).format(user.walletAmount)}
                   </p>
+
                 </div>
 
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">
@@ -261,7 +265,10 @@ export default function ProfilePage() {
                     </div>
                     <span className="text-sm font-semibold text-gray-300">Commission</span>
                   </div>
-                  <p className="text-4xl font-extrabold text-[#a3d65c] drop-shadow-lg">${user.commission.toFixed(2)}</p>
+                  <p className="text-4xl font-extrabold text-[#a3d65c] drop-shadow-lg">{new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    }).format(user.commission)}</p>
                 </div>
 
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">

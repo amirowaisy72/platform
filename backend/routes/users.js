@@ -212,7 +212,6 @@ router.get("/search", async (req, res) => {
   }
 });
 
-
 // ✅ Update User (PUT)
 router.put("/updateUser/:id", async (req, res) => {
   try {
@@ -240,6 +239,7 @@ router.put("/updateUser/:id", async (req, res) => {
       "allowWithdrawal",
       "notifications",
       "todayProfit",
+      "creditScore",
     ];
 
     allowedFields.forEach((field) => {

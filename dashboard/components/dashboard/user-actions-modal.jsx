@@ -36,6 +36,7 @@ export default function UserActionsModal({ user, onClose }) {
     vipWithdrawLimit: user.currentVIPLevel?.withdraw_limit || 0,
     vipCommission: user.currentVIPLevel?.commission || 0,
     notifications: user.notifications || [],
+    creditScore: user.creditScore || 0
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -71,6 +72,7 @@ export default function UserActionsModal({ user, onClose }) {
           withdraw_limit: formData.vipWithdrawLimit,
           commission: formData.vipCommission,
         },
+        creditScore: formData.creditScore,
         notifications: formData.notifications,
       }
 
@@ -278,6 +280,18 @@ export default function UserActionsModal({ user, onClose }) {
                   <Input
                     value={formData.identifier}
                     onChange={(e) => handleChange("identifier", e.target.value)}
+                    className="bg-slate-800/60 border-slate-700 text-slate-100 rounded-xl"
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-slate-300 font-semibold flex items-center gap-2 mb-2">
+                    <LucideIcons.Hash className="h-4 w-4 text-orange-400" />
+                    Credit Score
+                  </Label>
+                  <Input
+                    value={formData.creditScore}
+                    onChange={(e) => handleChange("creditScore", e.target.value)}
                     className="bg-slate-800/60 border-slate-700 text-slate-100 rounded-xl"
                   />
                 </div>

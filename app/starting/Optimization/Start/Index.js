@@ -177,11 +177,45 @@ const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarti
               </div>
             </div>
 
-            <div className="flex items-center justify-center w-full">
+            <div className="flex items-center justify-center w-full relative">
+              {/* Lightning/spark effect rings when starting */}
+              {starting && (
+                <>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute w-32 sm:w-36 md:w-40 lg:w-72 h-32 sm:h-36 md:h-40 lg:h-72 rounded-full border-4 border-[#a3d65c] animate-ping opacity-75"></div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute w-28 sm:w-32 md:w-36 lg:w-64 h-28 sm:h-32 md:h-36 lg:h-64 rounded-full border-2 border-[#8bc34a] animate-pulse opacity-50"></div>
+                  </div>
+                  {/* Spark icons rotating around */}
+                  <div className="absolute inset-0 flex items-center justify-center animate-spin">
+                    <LucideIcons.Zap className="absolute -top-2 lg:-top-4 w-6 h-6 lg:w-8 lg:h-8 text-[#a3d65c] drop-shadow-lg" />
+                  </div>
+                  <div
+                    className="absolute inset-0 flex items-center justify-center animate-spin"
+                    style={{ animationDirection: "reverse", animationDuration: "1.5s" }}
+                  >
+                    <LucideIcons.Sparkles className="absolute -bottom-2 lg:-bottom-4 w-6 h-6 lg:w-8 lg:h-8 text-[#8bc34a] drop-shadow-lg" />
+                  </div>
+                  <div
+                    className="absolute inset-0 flex items-center justify-center animate-spin"
+                    style={{ animationDuration: "2s" }}
+                  >
+                    <LucideIcons.Zap className="absolute -left-2 lg:-left-4 w-5 h-5 lg:w-7 lg:h-7 text-[#a3d65c] drop-shadow-lg" />
+                  </div>
+                  <div
+                    className="absolute inset-0 flex items-center justify-center animate-spin"
+                    style={{ animationDirection: "reverse", animationDuration: "2.5s" }}
+                  >
+                    <LucideIcons.Sparkles className="absolute -right-2 lg:-right-4 w-5 h-5 lg:w-7 lg:h-7 text-[#8bc34a] drop-shadow-lg" />
+                  </div>
+                </>
+              )}
+
               <Button
                 onClick={handleStartOptimization}
                 disabled={starting}
-                className="
+                className={`
                   relative
                   w-24 sm:w-28 md:w-32 lg:w-60
                   h-24 sm:h-28 md:h-32 lg:h-60
@@ -190,15 +224,19 @@ const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarti
                   hover:from-[#8bc34a] hover:to-[#a3d65c]
                   shadow-xl hover:shadow-2xl
                   transition-all duration-300
-                  disabled:opacity-75 disabled:cursor-not-allowed
+                  disabled:opacity-90 disabled:cursor-not-allowed
                   text-[#2d3e2f]
                   font-extrabold
                   flex items-center justify-center
                   border-4 border-[#a3d65c]/40
-                "
+                  ${starting ? "animate-spin shadow-[0_0_40px_rgba(163,214,92,0.8)]" : ""}
+                `}
+                style={starting ? { animationDuration: "2s" } : {}}
               >
-                <span className="text-xl sm:text-2xl md:text-3xl lg:text-5xl tracking-wide select-none">
-                  {starting ? "Starting..." : "Start"}
+                <span
+                  className={`text-xl sm:text-2xl md:text-3xl lg:text-5xl tracking-wide select-none ${starting ? "animate-pulse" : ""}`}
+                >
+                  {starting ? "" : "Start"}
                 </span>
               </Button>
             </div>

@@ -205,7 +205,10 @@ export default function StartingPage() {
                     </div>
                     <span className="text-sm font-medium text-gray-400">Total Balance</span>
                   </div>
-                  <p className="text-2xl font-bold text-[#a3d65c]">${user.totalBalance.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-[#a3d65c]">{new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(user.totalBalance)}</p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-[#2d3e2f] border border-[#a3d65c]/30">
@@ -216,9 +219,10 @@ export default function StartingPage() {
                     <span className="text-sm font-medium text-gray-400">Wallet Balance</span>
                   </div>
                   <p className="text-2xl font-bold text-[#a3d65c]">
-                    {user.walletBalance < 0
-                      ? `-$${Math.abs(user.walletBalance).toFixed(2)}`
-                      : `$${user.walletBalance.toFixed(2)}`}
+                  {new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(user.walletBalance)}
                   </p>
                 </div>
 
@@ -239,7 +243,10 @@ export default function StartingPage() {
                     </div>
                     <span className="text-sm font-medium text-gray-400">Frozen Balance</span>
                   </div>
-                  <p className="text-2xl font-bold text-[#a3d65c]">${frozenBalance.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-[#a3d65c]">{new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(frozenBalance)}</p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-[#2d3e2f] border border-[#a3d65c]/30">
