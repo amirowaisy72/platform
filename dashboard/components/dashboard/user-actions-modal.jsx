@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,11 +9,21 @@ import * as LucideIcons from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Switch } from "@/components/ui/switch"
 import { useDashboard } from "../../app/AllContext/DashboardContext"
+import { useUsersContext } from "@/app/AllContext/UsersContext"
 
 export default function UserActionsModal({ user, onClose }) {
   const { updateUserAPI } = useDashboard()
+  const { getWalletAddressesByUser, updateWalletAddress } = useUsersContext()
   const { toast } = useToast()
   const [activeTab, setActiveTab] = useState("basic")
+  const [walletAddresses, setWalletAddresses] = useState([])
+  const [walletLoading, setWalletLoading] = useState(false)
+  const [updatingWalletId, setUpdatingWalletId] = useState(null)
+  const [walletStatus, setWalletStatus] = useState({
+    id: null,
+    type: null, // "success" | "error"
+    message: "",
+  })
 
   const [formData, setFormData] = useState({
     username: user.username || "",
@@ -44,6 +54,57 @@ export default function UserActionsModal({ user, onClose }) {
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
+
+  const loadWalletAddresses = async () => {
+    setWalletLoading(true)
+    const res = await getWalletAddressesByUser(user._id)
+    if (res.success) {
+      setWalletAddresses(res.addresses)
+    }
+    setWalletLoading(false)
+  }
+
+  useEffect(() => {
+    if (activeTab === "wallets") {
+      loadWalletAddresses()
+    }
+  }, [activeTab])
+
+  const handleWalletChange = (index, field, value) => {
+    setWalletAddresses((prev) =>
+      prev.map((wallet, i) =>
+        i === index ? { ...wallet, [field]: value } : wallet
+      )
+    )
+  }
+
+  const handleWalletUpdate = async (wallet) => {
+    setUpdatingWalletId(wallet._id)
+    setWalletStatus({ id: null, type: null, message: "" })
+
+    const res = await updateWalletAddress(wallet._id, {
+      userId: user._id,
+      walletLabel: wallet.walletLabel,
+      walletAddress: wallet.walletAddress,
+    })
+
+    if (res.success) {
+      setWalletStatus({
+        id: wallet._id,
+        type: "success",
+        message: "Wallet updated successfully",
+      })
+    } else {
+      setWalletStatus({
+        id: wallet._id,
+        type: "error",
+        message: res.error || "Failed to update wallet",
+      })
+    }
+
+    setUpdatingWalletId(null)
+  }
+
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
@@ -156,6 +217,7 @@ export default function UserActionsModal({ user, onClose }) {
               { id: "financial", label: "Financial", icon: LucideIcons.DollarSign },
               { id: "vip", label: "VIP Level", icon: LucideIcons.Crown },
               { id: "notifications", label: "Notifications", icon: LucideIcons.Bell },
+              { id: "wallets", label: "Wallet Addresses", icon: LucideIcons.Wallet },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -283,7 +345,7 @@ export default function UserActionsModal({ user, onClose }) {
                     className="bg-slate-800/60 border-slate-700 text-slate-100 rounded-xl"
                   />
                 </div>
-                
+
                 <div>
                   <Label className="text-slate-300 font-semibold flex items-center gap-2 mb-2">
                     <LucideIcons.Hash className="h-4 w-4 text-orange-400" />
@@ -503,6 +565,86 @@ export default function UserActionsModal({ user, onClose }) {
             </div>
           )}
         </div>
+
+        {/* Wallet Addresses Tab */}
+        {activeTab === "wallets" && (
+          <div className="space-y-4">
+            {walletLoading ? (
+              <div className="text-center text-slate-400">Loading wallets...</div>
+            ) : walletAddresses.length === 0 ? (
+              <div className="text-center text-slate-400">
+                No wallet addresses found
+              </div>
+            ) : (
+              walletAddresses.map((wallet, index) => (
+                <div
+                  key={wallet._id}
+                  className="bg-slate-800/60 border border-slate-700 rounded-xl p-4 space-y-4"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-slate-300 mb-2 block">
+                        Wallet Label
+                      </Label>
+                      <Input
+                        value={wallet.walletLabel}
+                        onChange={(e) =>
+                          handleWalletChange(index, "walletLabel", e.target.value)
+                        }
+                        className="bg-slate-900 border-slate-700 text-slate-100 rounded-xl"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-slate-300 mb-2 block">
+                        Wallet Address
+                      </Label>
+                      <Input
+                        value={wallet.walletAddress}
+                        onChange={(e) =>
+                          handleWalletChange(index, "walletAddress", e.target.value)
+                        }
+                        className="bg-slate-900 border-slate-700 text-slate-100 rounded-xl"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleWalletUpdate(wallet)}
+                      disabled={updatingWalletId === wallet._id}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl"
+                    >
+                      {updatingWalletId === wallet._id ? (
+                        <>
+                          <LucideIcons.Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        <>
+                          <LucideIcons.Save className="h-4 w-4 mr-2" />
+                          Update Wallet
+                        </>
+                      )}
+                    </Button>
+                    {walletStatus.id === wallet._id && (
+                      <div
+                        className={`text-sm mt-2 font-medium ${walletStatus.type === "success"
+                            ? "text-green-400"
+                            : "text-red-400"
+                          }`}
+                      >
+                        {walletStatus.message}
+                      </div>
+                    )}
+
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
 
         {/* Footer */}
         <div className="sticky bottom-0 bg-slate-900/95 backdrop-blur p-6 border-t border-slate-700 rounded-b-3xl">

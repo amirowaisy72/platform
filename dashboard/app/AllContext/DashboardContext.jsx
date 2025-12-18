@@ -99,7 +99,7 @@ export function DashboardProvider({ children }) {
     setUsers([...users, newUser]);
     return newUser;
   };
-
+  
   const updateUser = (userId, updatedData) => {
     setUsers(users.map(user =>
       user._id === userId ? { ...user, ...updatedData } : user

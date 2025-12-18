@@ -12,7 +12,7 @@ export function UsersProvider({ children }) {
 
   // const host = "http://localhost:3001/"
   const host = "https://platform-backend-pi.vercel.app/"
-// 
+  // 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -394,6 +394,69 @@ export function UsersProvider({ children }) {
     }
   };
 
+  const getWalletAddressesByUser = async (userId) => {
+    try {
+      const response = await fetch(
+        `${host}api/users/getWalletAddresses/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch wallet addresses");
+      }
+
+      return {
+        success: true,
+        addresses: data.addresses,
+      };
+    } catch (error) {
+      console.error("Get Wallet Addresses Error:", error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  };
+
+  const updateWalletAddress = async (addressId, payload) => {
+    try {
+      const response = await fetch(
+        `${host}api/users/updateAddress/${addressId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload), // { userId, walletLabel, walletAddress }
+        }
+      );
+  
+      const data = await response.json();
+  
+      if (!response.ok || data.error) {
+        throw new Error(data.error || "Failed to update wallet address");
+      }
+  
+      return {
+        success: true,
+        address: data.address,
+      };
+    } catch (error) {
+      console.error("Update Wallet Address Error:", error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  };
+  
   return (
     <UsersContext.Provider
       value={{
@@ -418,7 +481,9 @@ export function UsersProvider({ children }) {
         getUserByUserId,
         fetchWalletAddress,
         fetchTasksByUser,
-        createTransactionAPI
+        createTransactionAPI,
+        getWalletAddressesByUser,
+        updateWalletAddress
       }}
     >
       {children}
