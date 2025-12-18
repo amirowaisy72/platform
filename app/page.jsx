@@ -334,7 +334,7 @@ export default function HomePage() {
         </main>
 
         {/* Enhanced Fixed Badge */}
-        {/* <div className="fixed bottom-28 right-4 z-50">
+        <div className="fixed bottom-28 right-4 z-50">
           <Button className="group flex items-center gap-3 px-6 py-4 rounded-full shadow-2xl bg-lime-500 hover:bg-lime-600 text-[#2d3e2f] transition-all duration-300 transform hover:scale-105 border-2 border-lime-400">
             <div className="w-8 h-8 rounded-full bg-[#2d3e2f]/30 flex items-center justify-center">
               <LucideIcons.UserCircle className="h-5 w-5 text-[#2d3e2f]" />
@@ -345,7 +345,7 @@ export default function HomePage() {
             </div>
             <LucideIcons.ChevronUp className="h-4 w-4 group-hover:-translate-y-1 transition-transform" />
           </Button>
-        </div> */}
+        </div>
 
         <Bottom />
       </div>
