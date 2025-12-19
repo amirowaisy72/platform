@@ -2,8 +2,11 @@
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import * as LucideIcons from "lucide-react"
+import { useLiveSupportContext } from "@/app/AllContext/ChatContext"
 
 export default function CS() {
+  const { setIsChatOpen } = useLiveSupportContext()
+
   const contactMethods = [
     {
       name: "Live Chat",
@@ -38,6 +41,11 @@ export default function CS() {
             <Button
               key={method.name}
               variant="outline"
+              onClick={() => {
+                if (method.name === "Live Chat") {
+                  setIsChatOpen(true)
+                }
+              }}
               className="w-full h-auto p-4 bg-[#3d4f3f]/50 border-[#3d4f3f] hover:bg-[#3d4f3f] hover:border-[#a3d65c] transition-all duration-300 group"
             >
               <div className="flex items-center gap-4 w-full">
@@ -53,6 +61,7 @@ export default function CS() {
             </Button>
           )
         })}
+
       </div>
 
       <div className="pt-4 border-t border-[#3d4f3f]">

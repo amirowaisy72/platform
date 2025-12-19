@@ -5,16 +5,31 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import * as LucideIcons from "lucide-react"
-import { DashboardProvider, useDashboard } from "../AllContext/DashboardContext"
+import { DashboardProvider, useDashboard } from "@/app/AllContext/DashboardContext"
 import UsersManagement from "@/components/dashboard/users-management"
 import ProductsManagement from "@/components/dashboard/products-management"
 import WalletsManagement from "@/components/dashboard/wallets-management"
+import LiveChat from "@/components/dashboard/live-chat"
+import { useChatContext } from "@/app/AllContext/ChatContext"
 
 function DashboardContent() {
   const { activeTab, setActiveTab } = useDashboard()
   const [showLogout, setShowLogout] = useState(false)
   const router = useRouter()
+  // Count of users with pending messages (real-time)
+  const [pendingUsersCount, setPendingUsersCount] = useState(0);
+
+  // Count of users with pending messages
+  const { messages, users } = useChatContext() // assuming your context provides users/messages
+
+  useEffect(() => {
+    if (users) {
+      const count = users.filter(u => u.pendingMessages > 0).length;
+      setPendingUsersCount(count);
+    }
+  }, [users]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user")
@@ -34,6 +49,14 @@ function DashboardContent() {
     { id: "users", label: "Users Management", icon: "Users", color: "from-blue-500 to-cyan-500" },
     { id: "products", label: "Products Management", icon: "Package", color: "from-purple-500 to-pink-500" },
     { id: "wallets", label: "Manage Wallets", icon: "Wallet", color: "from-green-500 to-emerald-500" },
+    {
+      id: "live-chat",
+      label: "Live Chat",
+      icon: "MessageSquare",
+      color: "from-cyan-500 to-blue-500",
+      badge: pendingUsersCount
+    },
+
   ]
 
   return (
@@ -108,14 +131,16 @@ function DashboardContent() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
-                    isActive
-                      ? `bg-gradient-to-r ${item.color} text-white shadow-lg transform scale-105`
-                      : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-100"
-                  }`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 relative ${isActive
+                    ? `bg-gradient-to-r ${item.color} text-white shadow-lg transform scale-105`
+                    : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-100"
+                    }`}
                 >
                   {IconComponent && <IconComponent className="h-5 w-5" />}
                   <span className="font-semibold">{item.label}</span>
+                  {item.badge && item.badge > 0 && (
+                    <Badge className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5">{item.badge}</Badge>
+                  )}
                 </button>
               )
             })}
@@ -128,13 +153,17 @@ function DashboardContent() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`px-4 py-2 rounded-lg whitespace-nowrap font-semibold transition-all ${
-                activeTab === item.id
-                  ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-                  : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-              }`}
+              className={`relative px-4 py-2 rounded-lg whitespace-nowrap font-semibold transition-all ${activeTab === item.id
+                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                }`}
             >
               {item.label}
+              {item.badge && item.badge > 0 && (
+                <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs h-5 w-5 flex items-center justify-center p-0 rounded-full">
+                  {item.badge}
+                </Badge>
+              )}
             </button>
           ))}
         </div>
@@ -145,6 +174,7 @@ function DashboardContent() {
             {activeTab === "users" && <UsersManagement />}
             {activeTab === "products" && <ProductsManagement />}
             {activeTab === "wallets" && <WalletsManagement />}
+            {activeTab === "live-chat" && <LiveChat />}
           </div>
         </main>
       </div>
