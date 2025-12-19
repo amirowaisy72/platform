@@ -8,8 +8,8 @@ const UsersContext = createContext();
 export function UsersProvider({ children }) {
   const [user, setUser] = useState(null);
   const router = useRouter();
-  const host = "http://localhost:3001/"
-  // const host = "https://platform-backend-pi.vercel.app/"
+  // const host = "http://localhost:3001/"
+  const host = "https://platform-backend-pi.vercel.app/"
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
