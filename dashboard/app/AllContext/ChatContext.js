@@ -5,8 +5,9 @@ import { createContext, useContext, useState, useEffect, useRef } from "react"
 const ChatContext = createContext(undefined)
 
 export function ChatProvider({ children }) {
-  // const host = "http://localhost:3001/"
-  const host = "https://platform-backend-pi.vercel.app/"
+  const host1offline = "http://localhost:3001/"
+  const host2offline = "http://localhost:3004/"
+  // const host1online = "https://platform-backend-pi.vercel.app/"
   const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(null)
   const [messages, setMessages] = useState([])
@@ -16,7 +17,7 @@ export function ChatProvider({ children }) {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${host}api/liveSupport/allUsers`)
+      const res = await fetch(`${host2offline}api/liveSupport/allUsers`)
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to fetch users")
       setUsers(data.users || [])
@@ -55,7 +56,7 @@ export function ChatProvider({ children }) {
   }
 
   useEffect(() => {
-    const sse = new EventSource(`${host}api/liveSupport/stream`)
+    const sse = new EventSource(`${host2offline}api/liveSupport/stream`)
     sseRef.current = sse
 
     sse.onmessage = (event) => {
@@ -131,7 +132,7 @@ export function ChatProvider({ children }) {
     }
 
     try {
-      const res = await fetch(`${host}api/liveSupport/send`, {
+      const res = await fetch(`${host2offline}api/liveSupport/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -148,7 +149,7 @@ export function ChatProvider({ children }) {
   const fetchChatHistory = async (userId) => {
     if (!userId) return []
     try {
-      const res = await fetch(`${host}api/liveSupport/history/${userId}`)
+      const res = await fetch(`${host2offline}api/liveSupport/history/${userId}`)
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to fetch chat history")
       setMessages(data.messages || [])
@@ -171,7 +172,7 @@ export function ChatProvider({ children }) {
 
   const markMessagesAsRead = async (userId, messageIds = null) => {
     try {
-      const res = await fetch(`${host}api/liveSupport/mark-read`, {
+      const res = await fetch(`${host2offline}api/liveSupport/mark-read`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, messageIds }),
@@ -201,7 +202,7 @@ export function ChatProvider({ children }) {
     if (!userId) return
 
     try {
-      const res = await fetch(`${host}api/liveSupport/killChat/${userId}`, {
+      const res = await fetch(`${host2offline}api/liveSupport/killChat/${userId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       })
@@ -222,7 +223,7 @@ export function ChatProvider({ children }) {
 
   const sendTypingStatus = async (userId, username, sender, isTyping) => {
     try {
-      await fetch(`${host}api/liveSupport/typing`, {
+      await fetch(`${host2offline}api/liveSupport/typing`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, username, sender, isTyping }),

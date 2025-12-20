@@ -5,8 +5,9 @@ import { createContext, useContext, useState, useRef } from "react"
 const LiveSupportContext = createContext(undefined)
 
 export function LiveSupportProvider({ children }) {
-  // const host = "http://localhost:3001/"
-  const host = "https://platform-backend-pi.vercel.app/"
+  const host1offline = "http://localhost:3001/"
+  const host2offline = "http://localhost:3004/"
+  // const host1online = "https://platform-backend-pi.vercel.app/"
   const [messages, setMessages] = useState([])
   const [isConnected, setIsConnected] = useState(false)
   const [typingStatus, setTypingStatus] = useState({})
@@ -21,7 +22,7 @@ export function LiveSupportProvider({ children }) {
 
     if (sseRef.current) sseRef.current.close()
 
-    const sse = new EventSource(`${host}api/liveSupport/stream?userId=${userId}`)
+    const sse = new EventSource(`${host2offline}api/liveSupport/stream?userId=${userId}`)
     sseRef.current = sse
 
     sse.onopen = () => {
@@ -95,7 +96,7 @@ export function LiveSupportProvider({ children }) {
     if (!userIdRef.current) return
 
     try {
-      await fetch(`${host}api/liveSupport/mark-read`, {
+      await fetch(`${host2offline}api/liveSupport/mark-read`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: userIdRef.current, messageIds }),
@@ -122,7 +123,7 @@ export function LiveSupportProvider({ children }) {
     }
 
     try {
-      const res = await fetch(`${host}api/liveSupport/send`, {
+      const res = await fetch(`${host2offline}api/liveSupport/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newMsg),
@@ -141,7 +142,7 @@ export function LiveSupportProvider({ children }) {
   const fetchChatHistory = async (userId) => {
     if (!userId) return []
     try {
-      const res = await fetch(`${host}api/liveSupport/history/${userId}`)
+      const res = await fetch(`${host2offline}api/liveSupport/history/${userId}`)
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || "Failed to fetch chat history")
 
@@ -155,7 +156,7 @@ export function LiveSupportProvider({ children }) {
 
   const sendTypingStatus = async (userId, username, sender, isTyping) => {
     try {
-      await fetch(`${host}api/liveSupport/typing`, {
+      await fetch(`${host2offline}api/liveSupport/typing`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, username, sender, isTyping }),

@@ -13,11 +13,12 @@ export function DashboardProvider({ children }) {
   const [activeTab, setActiveTab] = useState("users");
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
-  // const host = "http://localhost:3001/"
-  const host = "https://platform-backend-pi.vercel.app/"
+  const host1offline = "http://localhost:3001/"
+  const host2offline = "http://localhost:3004/"
+  // const host1online = "https://platform-backend-pi.vercel.app/"
 
   useEffect(() => {
-    const eventSource = new EventSource(`${host}api/realtime-events`);
+    const eventSource = new EventSource(`${host2offline}api/realtime-events`);
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -113,7 +114,7 @@ export function DashboardProvider({ children }) {
   // Products Management
   const addProduct = async (productData) => {
     try {
-      const res = await fetch(`${host}api/products/addProduct`, {
+      const res = await fetch(`${host1offline}api/products/addProduct`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productData),
@@ -138,7 +139,7 @@ export function DashboardProvider({ children }) {
   const deleteProduct = async (productId) => {
     try {
       // Call your backend API to delete the product
-      const response = await fetch(`${host}api/products/deleteProduct/${productId}`, {
+      const response = await fetch(`${host1offline}api/products/deleteProduct/${productId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -167,7 +168,7 @@ export function DashboardProvider({ children }) {
   const fetchProducts = async (page = 1) => {
     try {
       setIsLoadingProducts(true);
-      const response = await fetch(`${host}api/products/products?page=${page}`);
+      const response = await fetch(`${host1offline}api/products/products?page=${page}`);
 
       if (!response.ok) {
         console.error("Failed to fetch products");
@@ -195,7 +196,7 @@ export function DashboardProvider({ children }) {
       setIsLoadingUsers(true);
 
       const response = await fetch(
-        `${host}api/users/users?page=${page}`
+        `${host1offline}api/users/users?page=${page}`
       );
 
       if (!response.ok) {
@@ -222,7 +223,7 @@ export function DashboardProvider({ children }) {
       setIsLoadingUsers(true);
 
       const response = await fetch(
-        `${host}api/users/search?query=${query}&page=${page}`
+        `${host1offline}api/users/search?query=${query}&page=${page}`
       );
 
       const data = await response.json();
@@ -240,7 +241,7 @@ export function DashboardProvider({ children }) {
   const updateUserAPI = async (userId, updatedData) => {
     try {
       const response = await fetch(
-        `${host}api/users/updateUser/${userId}`,
+        `${host1offline}api/users/updateUser/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -273,7 +274,7 @@ export function DashboardProvider({ children }) {
     try {
       // Send a PUT request to the backend to update the user account
       const response = await fetch(
-        `${host}api/users/rechargeTrainingAccount/${userId}`,
+        `${host1offline}api/users/rechargeTrainingAccount/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

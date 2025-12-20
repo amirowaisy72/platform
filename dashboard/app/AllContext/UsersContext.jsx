@@ -10,9 +10,55 @@ export function UsersProvider({ children }) {
   const router = useRouter();
   const [transactions, setTransactions] = useState(null)
 
-  // const host = "http://localhost:3001/"
-  const host = "https://platform-backend-pi.vercel.app/"
-  // 
+  const host1offline = "http://localhost:3001/"
+  const host2offline = "http://localhost:3004/"
+  // const host1online = "https://platform-backend-pi.vercel.app/"
+
+  useEffect(() => {
+    const eventSource = new EventSource(`${host2offline}api/realtime-events`);
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      // 🔥 INITIAL PENDING TRANSACTIONS
+      if (data.event === "initial_transactions") {
+        setTransactions(data.payload);
+      }
+
+      // 🔥 REALTIME TRANSACTION UPDATE
+      if (data.event === "transaction_update") {
+        const updatedDoc = data.payload.fullDocument;
+
+        setTransactions((prev) => {
+          const index = prev.findIndex(
+            (item) => item._id === updatedDoc._id
+          );
+
+          // ❌ Pending se bahar gaya → remove
+          if (updatedDoc.status !== "Pending") {
+            return prev.filter((item) => item._id !== updatedDoc._id);
+          }
+
+          // 🔁 Update existing
+          if (index !== -1) {
+            const updated = [...prev];
+            updated[index] = updatedDoc;
+            return updated;
+          }
+
+          // ➕ New Pending
+          return [updatedDoc, ...prev];
+        });
+      }
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    return () => eventSource.close();
+  }, []);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -248,52 +294,6 @@ export function UsersProvider({ children }) {
     }
   };
 
-  useEffect(() => {
-    const eventSource = new EventSource(`${host}api/realtime-events`);
-
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      // 🔥 INITIAL PENDING TRANSACTIONS
-      if (data.event === "initial_transactions") {
-        setTransactions(data.payload);
-      }
-
-      // 🔥 REALTIME TRANSACTION UPDATE
-      if (data.event === "transaction_update") {
-        const updatedDoc = data.payload.fullDocument;
-
-        setTransactions((prev) => {
-          const index = prev.findIndex(
-            (item) => item._id === updatedDoc._id
-          );
-
-          // ❌ Pending se bahar gaya → remove
-          if (updatedDoc.status !== "Pending") {
-            return prev.filter((item) => item._id !== updatedDoc._id);
-          }
-
-          // 🔁 Update existing
-          if (index !== -1) {
-            const updated = [...prev];
-            updated[index] = updatedDoc;
-            return updated;
-          }
-
-          // ➕ New Pending
-          return [updatedDoc, ...prev];
-        });
-      }
-    };
-
-    eventSource.onerror = () => {
-      eventSource.close();
-    };
-
-    return () => eventSource.close();
-  }, []);
-
-
 
   const updateTransactionStatus = async (transactionId, status) => {
     try {
@@ -437,13 +437,13 @@ export function UsersProvider({ children }) {
           body: JSON.stringify(payload), // { userId, walletLabel, walletAddress }
         }
       );
-  
+
       const data = await response.json();
-  
+
       if (!response.ok || data.error) {
         throw new Error(data.error || "Failed to update wallet address");
       }
-  
+
       return {
         success: true,
         address: data.address,
@@ -456,7 +456,7 @@ export function UsersProvider({ children }) {
       };
     }
   };
-  
+
   return (
     <UsersContext.Provider
       value={{
