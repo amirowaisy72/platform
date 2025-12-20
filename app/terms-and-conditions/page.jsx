@@ -43,7 +43,7 @@ export default function TermsAndConditionsPage() {
       content: [
         {
           number: "2.1",
-          text: "The withdrawal limit for VIP1 is 800, the withdrawal limit for VIP2 is 2,500USD, the withdrawal limit for VIP3 is 8,000USD, and the withdrawal limit for VIP4 is 500,000USD. If the account balance exceeds 500,000USD, please contact our online customer service to withdraw funds.",
+          text: "The withdrawal limit for VIP1 is 1,300 USD, the withdrawal limit for VIP2 is 4,000 USD, the withdrawal limit for VIP3 is 8,000 USD, and the withdrawal limit for VIP4 is Unlimited. If the account balance exceeds 500,000USD, please contact our online customer service to withdraw funds.",
         },
         {
           number: "2.2",

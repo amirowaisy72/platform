@@ -84,10 +84,52 @@
 --------------------------------*/
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    /* Optimized font rendering for better legibility */
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Apply heading font to heading elements */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+    font-weight: 700;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+
+  h5 {
+    @apply text-lg md:text-xl lg:text-2xl;
+  }
+
+  h6 {
+    @apply text-base md:text-lg lg:text-xl;
   }
 }
 
@@ -114,6 +156,72 @@
     -webkit-line-clamp: 3;
   }
 }
+
+@layer utilities {
+  @keyframes shimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, #2d3e2f 0%, #2d3e2f 40%, #a3d65c 50%, #2d3e2f 60%, #2d3e2f 100%);
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  .animate-shimmer-username {
+    background: linear-gradient(90deg, #1a241b 0%, #1a241b 40%, #8bc34a 50%, #1a241b 60%, #1a241b 100%);
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s ease-in-out infinite;
+    animation-delay: 0.5s;
+  }
+
+  /* Added utility class for heading font */
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+
+  /* Added professional text styling utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Enhanced letter spacing utilities for better readability */
+  .tracking-tighter {
+    letter-spacing: -0.05em;
+  }
+
+  .tracking-tight {
+    letter-spacing: -0.025em;
+  }
+
+  .tracking-normal {
+    letter-spacing: 0;
+  }
+
+  .tracking-wide {
+    letter-spacing: 0.025em;
+  }
+
+  .tracking-wider {
+    letter-spacing: 0.05em;
+  }
+}
+
 
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {

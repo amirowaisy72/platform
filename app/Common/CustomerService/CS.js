@@ -4,14 +4,22 @@ import { Button } from "@/components/ui/button"
 import * as LucideIcons from "lucide-react"
 import { useLiveSupportContext } from "@/app/AllContext/ChatContext"
 
-export default function CS() {
-  const { setIsChatOpen } = useLiveSupportContext()
+export default function CS({ userId, username }) {
+  const { setIsChatOpen, connectSSE, fetchChatHistory } = useLiveSupportContext()
+
+  const handleOpenChat = async () => {
+    if (!userId) return
+    setIsChatOpen(true)
+    await fetchChatHistory(userId)
+    connectSSE(userId)
+  }
 
   const contactMethods = [
     {
       name: "Live Chat",
       icon: "MessageCircle",
       description: "Chat with our support team",
+      onClick: handleOpenChat,
     },
     {
       name: "Email Support",
@@ -41,11 +49,7 @@ export default function CS() {
             <Button
               key={method.name}
               variant="outline"
-              onClick={() => {
-                if (method.name === "Live Chat") {
-                  setIsChatOpen(true)
-                }
-              }}
+              onClick={method.onClick}
               className="w-full h-auto p-4 bg-[#3d4f3f]/50 border-[#3d4f3f] hover:bg-[#3d4f3f] hover:border-[#a3d65c] transition-all duration-300 group"
             >
               <div className="flex items-center gap-4 w-full">

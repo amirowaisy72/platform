@@ -9,6 +9,7 @@ import * as LucideIcons from "lucide-react"
 import Image from "next/image"
 import { useUsersContext } from "@/app/AllContext/UsersContext"
 import CS from "@/app/Common/CustomerService/CS"
+import SupportChat from '@/app/Common/SupportChat/SupportChat'
 
 const ConfettiParticles = ({ isVisible }) => {
   if (!isVisible) return null
@@ -146,10 +147,9 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
     return name.length > maxLength ? name.slice(0, maxLength) + "..." : name
   }
 
-  console.log(task)
-
   return (
     <>
+    <SupportChat userId={user._id} username={user.username} />
       <ConfettiParticles isVisible={showConfetti && isCombo} />
       <Dialog open={showTaskSubmissionDialog} onOpenChange={setShowTaskSubmissionDialog}>
         <DialogContent
@@ -284,7 +284,7 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
       </Dialog>
 
       <Dialog open={showCSDialog} onOpenChange={setShowCSDialog}>
-        <CS />
+        <CS userId={user._id} username={user.username} />
       </Dialog>
     </>
   )

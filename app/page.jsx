@@ -66,17 +66,11 @@ export default function HomePage() {
     },
   ]
 
-  const notifications = [
-    "🎉 Important update regarding service changes. Please check your inbox for details.",
-    "🚀 NEW EVENT: Coming soon! Stay tuned for more information.",
-    "💎 Don't miss out on our special VIP offers!",
-  ]
-
   if (!storedUser) return null
 
   return (
     <>
-    <SupportChat userId={storedUser._id} username={storedUser.username} />
+      <SupportChat userId={storedUser._id} username={storedUser.username} />
       <div className="flex flex-col min-h-screen bg-[#2d3e2f]">
         {/* Header */}
         <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#2d3e2f]/95 border-b border-[#3d4e3f] shadow-lg">
@@ -86,8 +80,12 @@ export default function HomePage() {
                 <LucideIcons.Zap className="h-6 w-6 text-[#2d3e2f]" />
               </div>
               <h1 className="text-2xl font-bold text-white tracking-wide">YourBrand</h1>
+
+
             </Link>
+
             <div className="flex items-center gap-3 relative">
+              {/* 🔔 Notifications */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -97,6 +95,29 @@ export default function HomePage() {
                 <LucideIcons.Bell className="h-6 w-6" />
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-lime-500 rounded-full animate-pulse"></div>
               </Button>
+
+              {/* 💬 Chat Icon */}
+              <SupportChat
+                userId={storedUser._id}
+                username={storedUser.username}
+                renderTrigger={({ unseenCount, openChat }) => (
+                  <button
+                    onClick={openChat}
+                    className="relative text-gray-300 hover:text-lime-400 transition-colors rounded-xl hover:bg-[#3d4e3f] p-2"
+                  >
+                    <LucideIcons.MessageCircle className="h-6 w-6" />
+
+                    {unseenCount > 0 && (
+                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                        {unseenCount}
+                      </span>
+                    )}
+                  </button>
+                )}
+              />
+
+
+              {/* 👤 Profile */}
               <Link
                 href="/profile"
                 className="text-gray-300 hover:text-lime-400 transition-colors rounded-xl hover:bg-[#3d4e3f] p-2"
@@ -104,7 +125,7 @@ export default function HomePage() {
                 <LucideIcons.UserCircle className="h-6 w-6" />
               </Link>
 
-              {/* Enhanced Notification Dropdown */}
+              {/* 🔽 Notification Dropdown */}
               {showNotifications && (
                 <Card className="absolute top-full right-0 mt-3 w-80 bg-[#3d4e3f]/95 backdrop-blur-xl border border-[#4d5e4f] shadow-2xl rounded-2xl z-50 overflow-hidden">
                   <div className="bg-lime-500 p-4">
@@ -114,20 +135,52 @@ export default function HomePage() {
                     </h3>
                   </div>
                   <div className="p-4">
-                    {notifications.length > 0 ? (
+                    {storedUser.notifications.length > 0 ? (
                       <ul className="space-y-3">
-                        {notifications.map((notification, index) => (
-                          <li
-                            key={index}
-                            className="text-sm text-gray-300 p-3 rounded-xl bg-[#2d3e2f]/50 border border-[#3d4e3f] hover:bg-[#2d3e2f] transition-all duration-200"
-                          >
-                            {notification}
-                          </li>
-                        ))}
+                        {storedUser.notifications.map((notification, index) => {
+                          // Optional: style based on notification type
+                          let bgColor = "bg-[#2d3e2f]/50 border-[#3d4e3f]"; // default
+                          let textColor = "text-gray-300";
+
+                          switch (notification.type) {
+                            case "success":
+                              bgColor = "bg-green-600/20 border-green-500";
+                              textColor = "text-green-400";
+                              break;
+                            case "warning":
+                              bgColor = "bg-yellow-600/20 border-yellow-500";
+                              textColor = "text-yellow-400";
+                              break;
+                            case "error":
+                              bgColor = "bg-red-600/20 border-red-500";
+                              textColor = "text-red-400";
+                              break;
+                            case "info":
+                            default:
+                              bgColor = "bg-[#2d3e2f]/50 border-[#3d4e3f]";
+                              textColor = "text-gray-300";
+                              break;
+                          }
+
+                          return (
+                            <li
+                              key={index}
+                              className={`text-sm p-3 rounded-xl ${bgColor} border hover:bg-[#2d3e2f] transition-all duration-200 ${textColor}`}
+                            >
+                              <p>{notification.message}</p>
+                              <p className="text-xs opacity-50 mt-1">
+                                {new Date(notification.createdAt).toLocaleString()}
+                              </p>
+                            </li>
+                          )
+                        })}
                       </ul>
                     ) : (
-                      <p className="text-gray-400 text-sm text-center py-4">No new notifications.</p>
+                      <p className="text-gray-400 text-sm text-center py-4">
+                        No new notifications.
+                      </p>
                     )}
+
                   </div>
                 </Card>
               )}
@@ -155,10 +208,6 @@ export default function HomePage() {
               <p className="text-xl text-gray-300 max-w-2xl mb-8">
                 Discover seamless services, exclusive events, and unparalleled support in our premium platform.
               </p>
-              <Button className="bg-lime-500 hover:bg-lime-600 text-[#2d3e2f] font-bold px-8 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
-                Request a Consultation
-                <LucideIcons.ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
             </div>
           </section>
 
@@ -192,7 +241,7 @@ export default function HomePage() {
                               </div>
                             </Button>
                           </DialogTrigger>
-                          <CS />
+                          <CS userId={storedUser._id} username={storedUser.username} />
                         </Dialog>
                       </div>
                     )
@@ -332,7 +381,6 @@ export default function HomePage() {
             </div>
           </section>
         </main>
-
         {/* Enhanced Fixed Badge */}
         <div className="fixed bottom-28 right-4 z-50">
           <Button className="group flex items-center gap-3 px-6 py-4 rounded-full shadow-2xl bg-lime-500 hover:bg-lime-600 text-[#2d3e2f] transition-all duration-300 transform hover:scale-105 border-2 border-lime-400">
@@ -340,8 +388,8 @@ export default function HomePage() {
               <LucideIcons.UserCircle className="h-5 w-5 text-[#2d3e2f]" />
             </div>
             <div className="text-left">
-              <p className="text-xs font-medium text-[#2d3e2f]/80">Welcome</p>
-              <p className="font-bold text-sm text-[#1a241b]">{storedUser?.username || "User"}</p>
+              <p className="text-xs font-medium animate-shimmer">Welcome</p>
+              <p className="font-bold text-sm animate-shimmer-username">{storedUser?.username || "User"}</p>
             </div>
             <LucideIcons.ChevronUp className="h-4 w-4 group-hover:-translate-y-1 transition-transform" />
           </Button>

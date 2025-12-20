@@ -51,6 +51,15 @@ router.post("/createUser", async (req, res) => {
 
     await newUser.save();
 
+    // 6️⃣ CREATE DEFAULT NOTIFICATION
+    newUser.notifications.push({
+      message: "Congratulations on creating new account. You've received your welcome bonus.",
+      type: "success",
+      read: false,
+    });
+
+    await newUser.save(); // Save again after adding notification
+
     // 4️⃣ CREATE TRANSACTION HISTORY (WELCOME CREDIT)
     const transaction = new TransactionHistory({
       userId: newUser._id,
@@ -68,7 +77,6 @@ router.post("/createUser", async (req, res) => {
     res.status(500).json({ error: "Server error. Please try again later." });
   }
 });
-
 
 // Route to log in an existing user
 router.post("/login", async (req, res) => {

@@ -10,7 +10,7 @@ import { useUsersContext } from "../AllContext/UsersContext"
 import { useRouter } from "next/navigation"
 import Bottom from "@/app/Common/Bottom/Bottom"
 import CS from "@/app/Common/CustomerService/CS"
-import SupportChat from '@/app/Common/SupportChat/SupportChat'
+import SupportChat from "@/app/Common/SupportChat/SupportChat"
 
 export default function ProfilePage() {
   const { logout } = useUsersContext()
@@ -44,6 +44,7 @@ export default function ProfilePage() {
       })
 
       setUser({
+        userId: userData._id,
         name: userData.username,
         invitationCode: userData.myinviteCode,
         vipLevel: "VIP " + userData.currentVIPLevel?.number,
@@ -51,7 +52,7 @@ export default function ProfilePage() {
         walletAmount: userData.walletBalance,
         commission: userData.commissionTotal,
         joinDate: joinDate,
-        creditScore: userData.creditScore
+        creditScore: userData.creditScore,
       })
 
       setProfilePhotoLink(userData.profile?.photoLink || "")
@@ -149,7 +150,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <SupportChat userId={storedUser._id} username={storedUser.username} />
+      <SupportChat userId={user.userId} username={user.name} />
       <div className="flex flex-col min-h-screen bg-[#2d3e2f]">
         <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#3a4d3c]/80 border-b border-[#a3d65c]/20 shadow-lg">
           <div className="flex items-center justify-between p-4">
@@ -212,19 +213,25 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                    <h2 className="text-4xl font-bold text-white mb-2">{user.name}</h2>
-                    <div className="flex items-center gap-2 mb-3 px-3 py-1 bg-[#a3d65c]/20 rounded-full border border-[#a3d65c]/30">
-                      <LucideIcons.Hash className="h-4 w-4 text-[#a3d65c]" />
-                      <span className="text-sm font-medium text-gray-200">{user.invitationCode}</span>
-                    </div>
-                    <div className="flex items-center gap-3 mb-2">
+                    <h2 className="text-4xl font-bold text-white mb-3">{user.name}</h2>
+
+                    {/* VIP Status - More prominent position */}
+                    <div className="flex items-center gap-3 mb-3">
                       <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#a3d65c] to-[#8bc34a] rounded-full shadow-lg">
                         <LucideIcons.Crown className="h-5 w-5 text-[#2d3e2f]" />
                         <span className="font-bold text-[#2d3e2f]">{user.vipLevel}</span>
                       </div>
                       <span className="text-lg font-semibold text-gray-200">{user.vipTier}</span>
                     </div>
-                    <p className="text-sm text-gray-400">Member since {user.joinDate}</p>
+
+                    {/* Member Since */}
+                    <p className="text-sm text-gray-400 mb-3">Member since {user.joinDate}</p>
+
+                    {/* Invitation Code - Now at bottom as utility info */}
+                    <div className="flex items-center gap-2 px-3 py-1 bg-[#a3d65c]/20 rounded-full border border-[#a3d65c]/30">
+                      <LucideIcons.Hash className="h-4 w-4 text-[#a3d65c]" />
+                      <span className="text-sm font-medium text-gray-200">{user.invitationCode}</span>
+                    </div>
                   </div>
                 </div>
 
@@ -241,9 +248,7 @@ export default function ProfilePage() {
                     </span>
 
                     {/* Max Score */}
-                    <span className="absolute right-0 text-sm font-medium text-gray-400">
-                      100%
-                    </span>
+                    <span className="absolute right-0 text-sm font-medium text-gray-400">{/* 100% */}</span>
                   </div>
 
                   {/* Progress Bar */}
@@ -254,7 +259,6 @@ export default function ProfilePage() {
                     ></div>
                   </div>
                 </div>
-
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">
@@ -270,7 +274,6 @@ export default function ProfilePage() {
                         currency: "USD",
                       }).format(user.walletAmount)}
                     </p>
-
                   </div>
 
                   <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">
@@ -280,10 +283,12 @@ export default function ProfilePage() {
                       </div>
                       <span className="text-sm font-semibold text-gray-300">Commission</span>
                     </div>
-                    <p className="text-4xl font-extrabold text-[#a3d65c] drop-shadow-lg">{new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    }).format(user.commission)}</p>
+                    <p className="text-4xl font-extrabold text-[#a3d65c] drop-shadow-lg">
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      }).format(user.commission)}
+                    </p>
                   </div>
 
                   <div className="p-6 rounded-2xl bg-gradient-to-br from-[#3a4d3c] to-[#2d3e2f] border-2 border-[#a3d65c]/30 backdrop-blur-sm shadow-xl">
@@ -473,7 +478,7 @@ export default function ProfilePage() {
               <DialogTitle className="text-2xl font-bold text-white">Contact Support</DialogTitle>
               <DialogDescription className="text-gray-300">Get in touch with our support team</DialogDescription>
             </DialogHeader>
-            <CS />
+            <CS userId={user.userId} username={user.name} />
           </DialogContent>
         </Dialog>
 

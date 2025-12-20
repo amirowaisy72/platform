@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { useLiveSupportContext } from "@/app/AllContext/ChatContext"
 import { optimizeImage, validateImageFile, getBase64Size } from "@/lib/image-optimizer"
 
-export default function Chatting({ userId, username }) {
+export default function Chatting({ userId, username, renderTrigger }) {
     const [replyingTo, setReplyingTo] = useState(null)
     const [hoveredMessageId, setHoveredMessageId] = useState(null)
     const [isDragging, setIsDragging] = useState(false)
@@ -16,6 +16,7 @@ export default function Chatting({ userId, username }) {
     const [inputText, setInputText] = useState("")
     const [isOptimizing, setIsOptimizing] = useState(false)
     const [unseenCount, setUnseenCount] = useState(0)
+    const textareaRef = useRef(null)
 
     const fileInputRef = useRef(null)
     const imageInputRef = useRef(null)
@@ -38,6 +39,27 @@ export default function Chatting({ userId, username }) {
         isChatOpen,
         setIsChatOpen,
     } = useLiveSupportContext()
+
+    useEffect(() => {
+        if (isChatOpen && textareaRef.current) {
+            textareaRef.current.focus()
+        }
+    }, [isChatOpen])
+
+    useEffect(() => {
+        const handleGlobalKeyDown = (e) => {
+            // Only typeable keys
+            if (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter") {
+                if (textareaRef.current) {
+                    textareaRef.current.focus()
+                }
+            }
+        }
+
+        window.addEventListener("keydown", handleGlobalKeyDown)
+        return () => window.removeEventListener("keydown", handleGlobalKeyDown)
+    }, [])
+
 
     useEffect(() => {
         if (!isChatOpen) {
@@ -151,8 +173,6 @@ export default function Chatting({ userId, username }) {
             })
 
             const optimizedSize = getBase64Size(optimizedDataUrl)
-            console.log(`[v0] Sending optimized image: ${optimizedSize.toFixed(2)} KB`)
-
             const newMsg = {
                 userId,
                 username,
@@ -167,7 +187,6 @@ export default function Chatting({ userId, username }) {
             await sendMessage(newMsg)
             setReplyingTo(null)
         } catch (error) {
-            console.error("[v0] Image optimization failed:", error)
             alert("Failed to optimize image. Please try again.")
         } finally {
             setIsOptimizing(false)
@@ -257,25 +276,10 @@ export default function Chatting({ userId, username }) {
 
     return (
         <>
-            {!isChatOpen && (
-                <div className="fixed bottom-24 left-6 z-[9999]">
-                <Button
-                  onClick={() => setIsChatOpen(true)}
-                  className="group relative w-14 h-14 rounded-full shadow-lg bg-lime-500 hover:bg-lime-600 transition-all duration-300 transform hover:scale-105 border border-lime-400"
-                >
-                  <LucideIcons.MessageCircle className="h-6 w-6 text-[#2d3e2f]" />
-              
-                  {unseenCount > 0 && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center border border-white">
-                      <span className="text-[10px] font-bold text-white">{unseenCount}</span>
-                    </div>
-                  )}
-              
-                  <div className="absolute inset-0 rounded-full bg-lime-400 opacity-0 group-hover:opacity-20 animate-ping"></div>
-                </Button>
-              </div>
-              
-            )}
+            {!isChatOpen && renderTrigger && renderTrigger({
+                unseenCount,
+                openChat: () => setIsChatOpen(true)
+            })}
 
             {isChatOpen && (
                 <div className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -320,8 +324,6 @@ export default function Chatting({ userId, username }) {
                                 isDragging && "bg-lime-500/10 border-2 border-dashed border-lime-500",
                             )}
                         >
-                            {console.log("[v0] User typing status:", typingStatus[userId])}
-
                             {isDragging && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-[#2d3e2f]/90 z-10 pointer-events-none">
                                     <div className="text-center">
@@ -540,7 +542,8 @@ export default function Chatting({ userId, username }) {
                                 </div>
                             )}
 
-                            <div className="flex gap-2 items-end">
+                            <div className="flex flex-col sm:flex-row gap-2 w-full sm:items-end">
+                                {/* Hidden Inputs */}
                                 <input
                                     ref={imageInputRef}
                                     type="file"
@@ -548,6 +551,7 @@ export default function Chatting({ userId, username }) {
                                     className="hidden"
                                     onChange={(e) => handleFileUpload(e, "image")}
                                 />
+
                                 <input
                                     ref={fileInputRef}
                                     type="file"
@@ -555,32 +559,37 @@ export default function Chatting({ userId, username }) {
                                     onChange={(e) => handleFileUpload(e, "file")}
                                 />
 
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    onClick={() => imageInputRef.current?.click()}
-                                    disabled={isOptimizing}
-                                    className="bg-[#3a4a3c] hover:bg-[#3d4e3f] text-lime-400 disabled:opacity-50"
-                                >
-                                    {isOptimizing ? (
-                                        <LucideIcons.Loader2 className="h-5 w-5 animate-spin" />
-                                    ) : (
-                                        <LucideIcons.Image className="h-5 w-5" />
-                                    )}
-                                </Button>
+                                {/* Upload Buttons */}
+                                <div className="flex gap-2 sm:flex-col">
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        onClick={() => imageInputRef.current?.click()}
+                                        disabled={isOptimizing}
+                                        className="bg-[#3a4a3c] hover:bg-[#3d4e3f] text-lime-400 disabled:opacity-50"
+                                    >
+                                        {isOptimizing ? (
+                                            <LucideIcons.Loader2 className="h-5 w-5 animate-spin" />
+                                        ) : (
+                                            <LucideIcons.Image className="h-5 w-5" />
+                                        )}
+                                    </Button>
 
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    disabled={isOptimizing}
-                                    className="bg-[#3a4a3c] hover:bg-[#3d4e3f] text-lime-400 disabled:opacity-50"
-                                >
-                                    <LucideIcons.Paperclip className="h-5 w-5" />
-                                </Button>
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        disabled={isOptimizing}
+                                        className="bg-[#3a4a3c] hover:bg-[#3d4e3f] text-lime-400 disabled:opacity-50"
+                                    >
+                                        <LucideIcons.Paperclip className="h-5 w-5" />
+                                    </Button>
+                                </div>
 
-                                <div className="flex-1 relative">
+                                {/* Textarea */}
+                                <div className="flex-1 relative w-full">
                                     <textarea
+                                        ref={textareaRef}
                                         value={inputText}
                                         onChange={handleInputChange}
                                         onKeyDown={(e) => {
@@ -591,12 +600,13 @@ export default function Chatting({ userId, username }) {
                                         }}
                                         placeholder={isOptimizing ? "Optimizing image..." : "Type your message..."}
                                         disabled={isOptimizing}
-                                        className="w-full bg-[#3a4a3c] text-gray-200 placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-lime-500 rounded-3xl pr-14 pl-4 py-3 resize-none min-h-[50px] max-h-[150px] overflow-y-auto disabled:opacity-50"
                                         style={{ lineHeight: "1.5rem" }}
+                                        className="w-full bg-[#3a4a3c] text-gray-200 placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-lime-500 rounded-3xl pr-14 pl-4 py-3 resize-none min-h-[50px] max-h-[150px] overflow-y-auto disabled:opacity-50"
                                     />
+
                                     <Button
                                         onClick={handleSendMessage}
-                                        disabled={inputText.trim() === "" || isOptimizing}
+                                        disabled={inputText.trim() === '' || isOptimizing}
                                         size="icon"
                                         className="absolute right-3 bottom-3 bg-lime-500 hover:bg-lime-600 text-[#2d3e2f] rounded-full shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-110"
                                     >
@@ -604,6 +614,7 @@ export default function Chatting({ userId, username }) {
                                     </Button>
                                 </div>
                             </div>
+
                         </div>
                     </Card>
                 </div>
