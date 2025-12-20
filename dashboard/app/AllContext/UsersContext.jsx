@@ -111,7 +111,7 @@ export function UsersProvider({ children }) {
   const fetchProducts = async (count) => {
     console.log("Hitting API")
     try {
-      const response = await fetch(`${host}api/products/fetchProducts/${count}`);
+      const response = await fetch(`${host1online}api/products/fetchProducts/${count}`);
       if (!response.ok) {
         const errData = await response.json();
         throw new Error(errData.error || "Failed to fetch products");
@@ -127,7 +127,7 @@ export function UsersProvider({ children }) {
   // Create Combo
   const createCombo = async (payload) => {
     try {
-      const response = await fetch(`${host}api/combo/create`, {
+      const response = await fetch(`${host1online}api/combo/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -149,7 +149,7 @@ export function UsersProvider({ children }) {
   // Get all combos
   const getAllCombos = async () => {
     try {
-      const response = await fetch(`${host}api/combo`);
+      const response = await fetch(`${host1online}api/combo`);
       const data = await response.json();
       return data.data || [];
     } catch (error) {
@@ -161,7 +161,7 @@ export function UsersProvider({ children }) {
   // Get combos by User ID
   const getCombosByUser = async (userId) => {
     try {
-      const response = await fetch(`${host}api/combo/user/${userId}/dashboard`);
+      const response = await fetch(`${host1online}api/combo/user/${userId}/dashboard`);
       const data = await response.json();
       return data.data || [];
     } catch (error) {
@@ -173,7 +173,7 @@ export function UsersProvider({ children }) {
   // Update Combo
   const updateCombo = async (id, payload) => {
     try {
-      const response = await fetch(`${host}api/combo/update/${id}`, {
+      const response = await fetch(`${host1online}api/combo/update/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -193,7 +193,7 @@ export function UsersProvider({ children }) {
   // Delete Combo
   const deleteCombo = async (id) => {
     try {
-      const response = await fetch(`${host}api/combo/delete/${id}`, {
+      const response = await fetch(`${host1online}api/combo/delete/${id}`, {
         method: "DELETE",
       });
 
@@ -211,7 +211,7 @@ export function UsersProvider({ children }) {
   // Reset combos and tasks for a user
   const resetUserData = async (userId) => {
     try {
-      const response = await fetch(`${host}api/combo/reset/${userId}`, {
+      const response = await fetch(`${host1online}api/combo/reset/${userId}`, {
         method: "DELETE",
       });
 
@@ -228,7 +228,7 @@ export function UsersProvider({ children }) {
 
   const addWallet = async (payload) => {
     try {
-      const response = await fetch(`${host}api/users/addWallet`, {
+      const response = await fetch(`${host1online}api/users/addWallet`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -247,7 +247,7 @@ export function UsersProvider({ children }) {
 
   const getWallets = async () => {
     try {
-      const response = await fetch(`${host}api/users/getWallet`);
+      const response = await fetch(`${host1online}api/users/getWallet`);
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch wallets");
@@ -261,7 +261,7 @@ export function UsersProvider({ children }) {
 
   const deleteWallet = async (id) => {
     try {
-      const response = await fetch(`${host}api/users/deleteWallet/${id}`, {
+      const response = await fetch(`${host1online}api/users/deleteWallet/${id}`, {
         method: "DELETE",
       });
 
@@ -278,7 +278,7 @@ export function UsersProvider({ children }) {
 
   const updateWallet = async (id, payload) => {
     try {
-      const response = await fetch(`${host}api/users/updateWallet/${id}`, {
+      const response = await fetch(`${host1online}api/users/updateWallet/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -298,7 +298,7 @@ export function UsersProvider({ children }) {
 
   const updateTransactionStatus = async (transactionId, status) => {
     try {
-      const response = await fetch(`${host}api/users/updateTransaction/${transactionId}`, {
+      const response = await fetch(`${host1online}api/users/updateTransaction/${transactionId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -317,7 +317,7 @@ export function UsersProvider({ children }) {
 
   const getUserByUserId = async (userId) => {
     try {
-      const response = await fetch(`${host}api/users/getUserByUserId/${userId}`, {
+      const response = await fetch(`${host1online}api/users/getUserByUserId/${userId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -335,7 +335,7 @@ export function UsersProvider({ children }) {
 
   const fetchWalletAddress = async (addressId) => {
     try {
-      const response = await fetch(`${host}api/users/fetchWalletAddress/${addressId}`);
+      const response = await fetch(`${host1online}api/users/fetchWalletAddress/${addressId}`);
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch wallet address");
@@ -349,7 +349,7 @@ export function UsersProvider({ children }) {
 
   const fetchTasksByUser = async (userId) => {
     try {
-      const response = await fetch(`${host}api/users/fetchTasks/${userId}`, {
+      const response = await fetch(`${host1online}api/users/fetchTasks/${userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -374,7 +374,7 @@ export function UsersProvider({ children }) {
   const createTransactionAPI = async (data) => {
     console.log(data)
     try {
-      const response = await fetch(`${host}api/users/createTransaction`, {
+      const response = await fetch(`${host1online}api/users/createTransaction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -398,7 +398,7 @@ export function UsersProvider({ children }) {
   const getWalletAddressesByUser = async (userId) => {
     try {
       const response = await fetch(
-        `${host}api/users/getWalletAddresses/${userId}`,
+        `${host1online}api/users/getWalletAddresses/${userId}`,
         {
           method: "GET",
           headers: {
@@ -429,7 +429,7 @@ export function UsersProvider({ children }) {
   const updateWalletAddress = async (addressId, payload) => {
     try {
       const response = await fetch(
-        `${host}api/users/updateAddress/${addressId}`,
+        `${host1online}api/users/updateAddress/${addressId}`,
         {
           method: "PUT",
           headers: {
