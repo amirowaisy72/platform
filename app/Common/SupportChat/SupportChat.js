@@ -48,18 +48,24 @@ export default function Chatting({ userId, username, renderTrigger }) {
 
     useEffect(() => {
         const handleGlobalKeyDown = (e) => {
+            // Don't interfere if user is already typing in an input/textarea
+            if (document.activeElement?.tagName === "TEXTAREA" || document.activeElement?.tagName === "INPUT") {
+                return
+            }
+
             // Only typeable keys
             if (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter") {
-                if (textareaRef.current) {
+                if (textareaRef.current && isChatOpen) {
                     textareaRef.current.focus()
                 }
             }
         }
 
-        window.addEventListener("keydown", handleGlobalKeyDown)
+        if (isChatOpen) {
+            window.addEventListener("keydown", handleGlobalKeyDown)
+        }
         return () => window.removeEventListener("keydown", handleGlobalKeyDown)
-    }, [])
-
+    }, [isChatOpen])
 
     useEffect(() => {
         if (!isChatOpen) {
@@ -603,14 +609,14 @@ export default function Chatting({ userId, username, renderTrigger }) {
                                         style={{ lineHeight: "1.5rem" }}
                                         className="w-full bg-[#3a4a3c] text-gray-200 placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-lime-500 rounded-3xl pr-14 pl-4 py-3 resize-none min-h-[50px] max-h-[150px] overflow-y-auto disabled:opacity-50"
                                     />
-
+                                    {/* Send button inside textarea */}
                                     <Button
                                         onClick={handleSendMessage}
-                                        disabled={inputText.trim() === '' || isOptimizing}
+                                        disabled={inputText.trim() === "" || isOptimizing}
                                         size="icon"
-                                        className="absolute right-3 bottom-3 bg-lime-500 hover:bg-lime-600 text-[#2d3e2f] rounded-full shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-110"
+                                        className="absolute right-2 bottom-2 h-8 w-8 bg-lime-500 hover:bg-lime-600 text-[#2d3e2f] disabled:bg-gray-600 disabled:text-gray-400 rounded-full shadow-lg transition-all duration-200"
                                     >
-                                        <LucideIcons.Send className="h-5 w-5" />
+                                        <LucideIcons.Send className="h-4 w-4" />
                                     </Button>
                                 </div>
                             </div>
