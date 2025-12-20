@@ -11,11 +11,12 @@ export function UsersProvider({ children }) {
   const [transactions, setTransactions] = useState(null)
 
   const host1offline = "http://localhost:3001/"
-  const host2offline = "http://localhost:3004/"
-  // const host1online = "https://platform-backend-pi.vercel.app/"
+  const host2offline = "http://localhost:8000/"
+  const host1online = "https://platform-backend-pi.vercel.app/"
+  const host2online = "https://gleaming-impala-mission122-e4facf5c.koyeb.app/"
 
   useEffect(() => {
-    const eventSource = new EventSource(`${host2offline}api/realtime-events`);
+    const eventSource = new EventSource(`${host2online}api/realtime-events`);
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);

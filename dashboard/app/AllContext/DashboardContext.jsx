@@ -14,11 +14,12 @@ export function DashboardProvider({ children }) {
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
   const host1offline = "http://localhost:3001/"
-  const host2offline = "http://localhost:3004/"
-  // const host1online = "https://platform-backend-pi.vercel.app/"
+  const host2offline = "http://localhost:8000/"
+  const host1online = "https://platform-backend-pi.vercel.app/"
+  const host2online = "https://gleaming-impala-mission122-e4facf5c.koyeb.app/"
 
   useEffect(() => {
-    const eventSource = new EventSource(`${host2offline}api/realtime-events`);
+    const eventSource = new EventSource(`${host2online}api/realtime-events`);
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -114,7 +115,7 @@ export function DashboardProvider({ children }) {
   // Products Management
   const addProduct = async (productData) => {
     try {
-      const res = await fetch(`${host1offline}api/products/addProduct`, {
+      const res = await fetch(`${host1online}api/products/addProduct`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productData),
@@ -139,7 +140,7 @@ export function DashboardProvider({ children }) {
   const deleteProduct = async (productId) => {
     try {
       // Call your backend API to delete the product
-      const response = await fetch(`${host1offline}api/products/deleteProduct/${productId}`, {
+      const response = await fetch(`${host1online}api/products/deleteProduct/${productId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -168,7 +169,7 @@ export function DashboardProvider({ children }) {
   const fetchProducts = async (page = 1) => {
     try {
       setIsLoadingProducts(true);
-      const response = await fetch(`${host1offline}api/products/products?page=${page}`);
+      const response = await fetch(`${host1online}api/products/products?page=${page}`);
 
       if (!response.ok) {
         console.error("Failed to fetch products");
@@ -196,7 +197,7 @@ export function DashboardProvider({ children }) {
       setIsLoadingUsers(true);
 
       const response = await fetch(
-        `${host1offline}api/users/users?page=${page}`
+        `${host1online}api/users/users?page=${page}`
       );
 
       if (!response.ok) {
@@ -223,7 +224,7 @@ export function DashboardProvider({ children }) {
       setIsLoadingUsers(true);
 
       const response = await fetch(
-        `${host1offline}api/users/search?query=${query}&page=${page}`
+        `${host1online}api/users/search?query=${query}&page=${page}`
       );
 
       const data = await response.json();
@@ -241,7 +242,7 @@ export function DashboardProvider({ children }) {
   const updateUserAPI = async (userId, updatedData) => {
     try {
       const response = await fetch(
-        `${host1offline}api/users/updateUser/${userId}`,
+        `${host1online}api/users/updateUser/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -274,7 +275,7 @@ export function DashboardProvider({ children }) {
     try {
       // Send a PUT request to the backend to update the user account
       const response = await fetch(
-        `${host1offline}api/users/rechargeTrainingAccount/${userId}`,
+        `${host1online}api/users/rechargeTrainingAccount/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
