@@ -6,7 +6,7 @@ const startUsersWatcher = require("./watchers/users.watcher")
 const startTransactionsWatcher = require("./watchers/transactions.watcher")
 
 const app = express()
-const PORT = 3004
+const PORT = 8000
 
 connectDB()
 
