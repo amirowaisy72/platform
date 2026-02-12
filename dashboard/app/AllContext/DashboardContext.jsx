@@ -16,7 +16,7 @@ export function DashboardProvider({ children }) {
   const host1offline = "http://localhost:3001/"
   const host2offline = "http://localhost:8000/"
   const host1online = "https://platform-backend-pi.vercel.app/"
-  const host2online = "https://gleaming-impala-mission122-e4facf5c.koyeb.app/"
+  const host2online = "known-emmaline-axon-1-26d7c97e.koyeb.app/"
 
   useEffect(() => {
     const eventSource = new EventSource(`${host2online}api/realtime-events`);
