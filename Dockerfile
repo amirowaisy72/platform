@@ -1,18 +1,23 @@
-# Use a base image with Node.js 24.x
+# Use Node.js as the base image
 FROM node:24
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and yarn.lock and install dependencies
-COPY package.json yarn.lock ./
-RUN yarn install
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Copy the rest of your app
+# Install dependencies
+RUN npm install --production
+
+# Copy the rest of your application
 COPY . .
 
-# Build the app
-RUN yarn build
+# Build the Next.js application
+RUN npm run build
 
-# Start the app
-CMD ["yarn", "start"]
+# Set the command to run your app
+CMD ["npm", "start"]
+
+# Expose the application port
+EXPOSE 3000
