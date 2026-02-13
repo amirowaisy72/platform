@@ -60,6 +60,8 @@ const TaskSubmissionDialog = ({ showTaskSubmissionDialog, task, setShowTaskSubmi
   const [showCSDialog, setShowCSDialog] = useState(false)
   const [continousCombo, setContinousCombo] = useState(0)
 
+  // walletBalance
+
   useEffect(() => {
     if (isCombo && task.combo && task.combo.Products?.length > 0 && user) {
       const comboPrice = Number(task.combo.comboPrice || 0)

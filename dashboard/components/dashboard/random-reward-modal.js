@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -17,6 +17,17 @@ export default function RandomRewardModal({ user, onClose }) {
     const { updateUserAPI } = useDashboard()
     const { createTransactionAPI } = useUsersContext()
     const { toast } = useToast()
+
+    // Effect to manage the checkbox state based on wallet balance
+    useEffect(() => {
+        if (user.walletBalance < 0 && Number.parseFloat(rewardAmount) >= Math.abs(user.walletBalance)) {
+            // If wallet balance is negative, check the checkbox and disable it
+            setLetClear(true)
+        } else {
+            // If wallet balance is positive, uncheck the checkbox and disable it
+            setLetClear(false)
+        }
+    }, [user.walletBalance, rewardAmount])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -134,6 +145,7 @@ export default function RandomRewardModal({ user, onClose }) {
                             checked={letClear}
                             onChange={(e) => setLetClear(e.target.checked)}
                             className="w-5 h-5 text-yellow-500 bg-slate-900 border-slate-700 rounded focus:ring-yellow-500"
+                            disabled={true}
                         />
                         <label htmlFor="letClear" className="text-sm font-medium text-slate-300">
                             Allow User to Clear Combo

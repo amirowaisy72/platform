@@ -37,6 +37,14 @@ const Index = ({ user, setShowTaskSubmissionDialog, setTask, starting, setStarti
 
   const handleStartOptimization = async () => {
     if (!user?._id) return
+
+    if (user.walletBalance < 0) {
+      setShowCSModal(true)
+      setCSMessage("Please contact the live support to")
+      setStarting(false)
+      return
+    }
+
     setStarting(true)
 
     const totalTasks =
