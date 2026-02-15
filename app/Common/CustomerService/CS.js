@@ -22,14 +22,12 @@ export default function CS({ userId, username }) {
       onClick: handleOpenChat,
     },
     {
-      name: "Email Support",
-      icon: "Mail",
-      description: "support@yourbrand.com",
-    },
-    {
-      name: "Phone Support",
-      icon: "Phone",
-      description: "+1 (555) 123-4567",
+      name: "WhatsApp Support",
+      icon: "MessageSquare",
+      description: "+1 (332) 265‑9055",
+      onClick: () => {
+        window.open("https://wa.me/13322659055", "_blank")
+      },
     },
   ]
 
@@ -71,7 +69,7 @@ export default function CS({ userId, username }) {
       <div className="pt-4 border-t border-[#3d4f3f]">
         <p className="text-sm text-gray-400 text-center">
           <LucideIcons.Clock className="h-4 w-4 inline mr-1" />
-          Available 24/7 for your support
+          Available 09:30 AM to 09:30 PM Easter time for your support
         </p>
       </div>
     </DialogContent>
