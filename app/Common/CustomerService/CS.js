@@ -24,7 +24,7 @@ export default function CS({ userId, username }) {
     {
       name: "Email Support",
       icon: "Mail",
-      description: "support@Admatric.com",
+      description: "support@yourbrand.com",
     },
     {
       name: "Phone Support",
