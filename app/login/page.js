@@ -63,7 +63,7 @@ export default function LoginPage() {
 
   return (
     <>
-    <SupportChat userId={generateUserId()} username="Anonymous User" />
+      <SupportChat userId={generateUserId()} username="Anonymous User" />
       <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#2d3e2f] via-[#3a4d3c] to-[#354a37]">
         {/* Enhanced Header */}
         <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#2d3e2f]/80 border-b border-[#a3d65c]/20 shadow-lg">
@@ -98,7 +98,11 @@ export default function LoginPage() {
             <div className="text-center">
               <div className="inline-flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-xl bg-[#a3d65c] flex items-center justify-center">
-                  <LucideIcons.Zap className="h-7 w-7 text-[#2d3e2f]" />
+                  <img
+                    src="/logo.webp"
+                    alt="Zap Icon"
+                    className="h-10 w-10"
+                  />
                 </div>
                 <h2 className="text-3xl font-bold text-[#a3d65c] tracking-wide">Admatric</h2>
               </div>

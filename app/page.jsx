@@ -77,7 +77,11 @@ export default function HomePage() {
           <div className="flex items-center justify-between p-4">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-lime-500 flex items-center justify-center shadow-lg">
-                <LucideIcons.Zap className="h-6 w-6 text-[#2d3e2f]" />
+                <img
+                    src="/logo.webp"
+                    alt="Zap Icon"
+                    className="h-10 w-10"
+                  />
               </div>
               <h1 className="text-2xl font-bold text-white tracking-wide">Admatric</h1>
 

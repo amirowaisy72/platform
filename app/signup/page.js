@@ -193,7 +193,11 @@ export default function SignupPage() {
           <div className="text-center">
             <div className="inline-flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-xl bg-[#a3d65c] flex items-center justify-center">
-                <LucideIcons.Zap className="h-7 w-7 text-[#2d3e2f]" />
+                <img
+                    src="/logo.webp"
+                    alt="Zap Icon"
+                    className="h-10 w-10"
+                  />
               </div>
               <h2 className="text-3xl font-bold text-[#a3d65c] tracking-wide">Admatric</h2>
             </div>

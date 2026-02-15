@@ -177,17 +177,17 @@ export default function RecordsPage() {
   })
 
   const completedTasks =
-  // 1️⃣ Regular tasks (combo: null)
-  taskRecords.filter(
-    r => !r.isCombo && r.status === "completed"
-  ).length
-  +
-  // 2️⃣ Combo tasks (1 combo = 1 task)
-  taskRecords.filter(
-    r =>
-      r.isCombo &&
-      r.comboProducts.every(p => p.status === "completed")
-  ).length
+    // 1️⃣ Regular tasks (combo: null)
+    taskRecords.filter(
+      r => !r.isCombo && r.status === "completed"
+    ).length
+    +
+    // 2️⃣ Combo tasks (1 combo = 1 task)
+    taskRecords.filter(
+      r =>
+        r.isCombo &&
+        r.comboProducts.every(p => p.status === "completed")
+    ).length
 
 
   const processingTasks = taskRecords.filter((r) => r.status === "processing").length
@@ -252,7 +252,11 @@ export default function RecordsPage() {
         <div className="flex items-center justify-between p-4">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#a3d65c] flex items-center justify-center">
-              <LucideIcons.Zap className="h-6 w-6 text-[#1a2617]" />
+              <img
+                src="/logo.webp"
+                alt="Zap Icon"
+                className="h-10 w-10"
+              />
             </div>
             <h1 className="text-2xl font-bold text-white tracking-wide">Admatric</h1>
           </Link>
